@@ -5,7 +5,7 @@ from struct import unpack
 from CommonEnums import MessageType, SourceType, DataBit, Method
 from EventItem import EventItem
 
-
+# привет
 class Event:
     def __init__(self):
         self.id = None
