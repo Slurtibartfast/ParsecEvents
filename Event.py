@@ -78,18 +78,6 @@ class Event:
 
         return result
 
-        self.id = None
-        self.parentId = None
-        self.componentId = None
-        self.timestamp = None
-        self.method = Method.miAddUser
-        self.sourceType = SourceType.stErrRestore
-        self.subSystem = 0
-        self.dataBits = DataBit.dbUndefined
-        self.messageType = MessageType.mtEvent
-        self.hardware = 0
-        self.items = []
-
     def json(self):
         return {
             "id": self.id,
