@@ -1,9 +1,11 @@
+import json
 import uuid
 from datetime import datetime
 from struct import unpack
 
 from CommonEnums import MessageType, SourceType, DataBit, Method
 from EventItem import EventItem
+
 
 # привет
 class Event:
@@ -79,7 +81,7 @@ class Event:
         return result
 
     def json(self):
-        return {
+        return json.dumps({
             "id": self.id,
             "parentId": self.parentId,
             "componentId": self.componentId,
@@ -90,7 +92,9 @@ class Event:
             "dataBits": self.dataBits,
             "messageType": self.messageType,
             "hardware": self.hardware,
-            "items": map(lambda x: x.json(), self.items)}
+            "items": list(map(lambda x: x.json(), self.items))},
+            default=str,
+            indent=4)
 
     """
     def create(id : mId, parentId : mParentId, componentId : mComponentId, timestamp: mDate, \
