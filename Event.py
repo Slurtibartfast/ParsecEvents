@@ -14,6 +14,7 @@ class Event:
         self.parentId = None
         self.componentId = None
         self.timestamp = None
+        self.code = 0
         self.method = Method.miAddUser
         self.sourceType = SourceType.stErrRestore
         self.subSystem = 0
@@ -45,6 +46,7 @@ class Event:
 
         result.timestamp = datetime.fromtimestamp(time)
 
+        result.code = code
         result.method = Method(code & 0xff)
         result.sourceType = SourceType((code >> 8) & 0x1f)
         result.subSystem = (code >> 13) & 0x7
@@ -86,6 +88,7 @@ class Event:
             "parentId": self.parentId,
             "componentId": self.componentId,
             "timestamp": self.timestamp,
+            "code": self.code,
             "method": self.method,
             "sourceType": self.sourceType,
             "subSystem": self.subSystem,
