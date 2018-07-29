@@ -18,17 +18,6 @@ class EventItem:
         self.temporary = False
         self.__data = bytearray(16)
 
-    def fromByteArray(value: bytes):
-        result = EventItem()
-        header = int.from_bytes(value[:4], byteorder="little")
-        result.__data = value[4:]
-        result.temporary = (header & 0x80000000) != 0
-        result.instance = header & 0xff
-        result.type = ParamType((header & 0x7fffff00) >> 24)
-        result.key = ParamKey((header >> 8) & 0xffff)
-
-        return result
-
     def create(key: ParamKey, type: ParamType, instance: int = 0, value=None):
         result = EventItem()
         result.key = key
@@ -39,7 +28,18 @@ class EventItem:
 
         return result
 
-    def toByteArray(self):
+    def from_bytes(value: bytes):
+        result = EventItem()
+        header = int.from_bytes(value[:4], byteorder="little")
+        result.__data = value[4:]
+        result.temporary = (header & 0x80000000) != 0
+        result.instance = header & 0xff
+        result.type = ParamType((header & 0x7fffff00) >> 24)
+        result.key = ParamKey((header >> 8) & 0xffff)
+
+        return result
+
+    def to_bytes(self):
         header = 0
         if self.temporary:
             header |= 1 << 31

@@ -23,7 +23,7 @@ class Event:
         self.hardware = 0
         self.items = []
 
-    def fromByteArray(value: bytes):
+    def from_bytes(value: bytes):
         result = Event()
 
         # skip 36 bytes envelope
@@ -55,30 +55,21 @@ class Event:
         result.hardware = (code >> 29) & 0x7
 
         for index in range(itemsCount):
-            result.items.append(EventItem.fromByteArray(value[offset:offset + EventItem.binarySize]))
+            result.items.append(EventItem.from_bytes(value[offset:offset + EventItem.binarySize]))
             offset += EventItem.binarySize
 
         return result
 
-    def toByteArray(self):
+    def to_bytes(self):
         result = self.id.bytes_le
         result += self.parentId.bytes_le
         result += self.componentId.bytes_le
-        result += int(self.timestamp()).to_bytes(length=4, byteorder="little")
-
-        code = 0
-        code |= (self.hardware & 0x7) << 29
-        code |= (self.messageType & 0x1f) << 24
-        code |= (self.dataBits & 0xff) << 16
-        code |= (self.subSystem & 0x7) << 13
-        code |= (self.sourceType & 0x1f) << 8
-        code |= self.method & 0xff
-
-        result += code.to_bytes(4, "little")
-        result += len(self.items).to_bytes(4, "little")
+        result += int(self.timestamp.timestamp()).to_bytes(length=4, byteorder="little")
+        result += self.code.to_bytes(length=4, byteorder="little")
+        result += len(self.items).to_bytes(length=4, byteorder="little")
 
         for item in self.items:
-            result += item.toByteArray()
+            result += item.to_bytes()
 
         return result
 
