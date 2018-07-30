@@ -18,6 +18,7 @@ class EventItem:
         self.temporary = False
         self.__data = bytearray(16)
 
+    @staticmethod
     def create(key: ParamKey, type: ParamType, instance: int = 0, value=None):
         result = EventItem()
         result.key = key
@@ -28,6 +29,7 @@ class EventItem:
 
         return result
 
+    @staticmethod
     def from_bytes(value: bytes):
         result = EventItem()
         header = int.from_bytes(value[:4], byteorder="little")

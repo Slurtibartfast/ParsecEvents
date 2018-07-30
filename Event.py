@@ -23,6 +23,7 @@ class Event:
         self.hardware = 0
         self.items = []
 
+    @staticmethod
     def from_bytes(value: bytes):
         result = Event()
 
