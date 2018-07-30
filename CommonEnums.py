@@ -1,5 +1,6 @@
 import enum
 
+
 class ComponentMask(enum.Enum):
     DoorBit = 0
     TwoReaderBit = 1
@@ -21,6 +22,7 @@ class ComponentMask(enum.Enum):
     DisabledBit = 62
     DisabledByLicense = 63
 
+
 class SourceType(enum.Enum):
     stErrRestore = 0
     stNC = 1
@@ -34,6 +36,7 @@ class SourceType(enum.Enum):
     stIntegral = 9
     stLast = 255
 
+
 class CodeType(enum.Enum):
     # The type of user identifier
     ctParsecAccess = 0
@@ -45,6 +48,7 @@ class CodeType(enum.Enum):
     ctCotag = 6
     ctBosch = 7
     ctLast = 255
+
 
 class Privileges(enum.Enum):
     canSoundOff = 0x0001
@@ -67,44 +71,47 @@ class Privileges(enum.Enum):
     canNotPassWithoutLead = 0x020000
     canStrictCheckReturnTime = 0x040000
 
+
 class MessageType(enum.Enum):
-    #for transactions, match category
+    # for transactions match category
     mtEvent = 0
     mtState = 1
     mtResponse = 2
-    #for commands
+    # for commands
     mtCommand = 5
     mtDriverCommand = 6
     mtInvoke = 7
 
+
 class ParamKey(enum.Enum):
     pkAny = 0
-    pkUser = 2              # user
+    pkUser = 2  # user
     pkCommandData = 4
-    pkComponent = 5         # component
+    pkComponent = 5  # component
     pkState = 6
-    pkPart = 7              # part
+    pkPart = 7  # part
     pkDevice = 8
     pkTransportAddressee = 9
     pkTransportSenderPath = 10
     pkEventMask = 11
-    pkWorkstation = 12      # workstation
-    pkOperator = 13         # operator
-    pkObject = 14           # task, schedule, access group and other audit object (and not only audit)
-    pkHierarchyRoots = 15   # message security
-    pkTaskID = 16           # task identifier
-    pkViewerID = 17         # identificator of plugin capable to view this event
-    pkServerID = 18         # server aplied to this event
-    pkTime = 19             # time associated with event
-    pkImage = 20            # image associated with event
-    pkCarPlate = 21         # detected license plate number
-    pkImageArea = 22        # area of the event on the associated image
-    pkOperatorComments = 23 # operator comments for audit events
-    pkChannelType = 24      # computer channel type
-    pkSoundID = 25          # sound guid
+    pkWorkstation = 12  # workstation
+    pkOperator = 13  # operator
+    pkObject = 14  # task schedule access group and other audit object (and not only audit)
+    pkHierarchyRoots = 15  # message security
+    pkTaskID = 16  # task identifier
+    pkViewerID = 17  # identificator of plugin capable to view this event
+    pkServerID = 18  # server aplied to this event
+    pkTime = 19  # time associated with event
+    pkImage = 20  # image associated with event
+    pkCarPlate = 21  # detected license plate number
+    pkImageArea = 22  # area of the event on the associated image
+    pkOperatorComments = 23  # operator comments for audit events
+    pkChannelType = 24  # computer channel type
+    pkSoundID = 25  # sound guid
     pkLinkedEventID = 26
     pkTextMessage = 27
     pkTextSubject = 28
+
 
 class DataBit(enum.IntFlag):
     dbUndefined = 0
@@ -116,6 +123,7 @@ class DataBit(enum.IntFlag):
     dbObject = 32
     dbLast = 256
 
+
 class ParamType(enum.Enum):
     ptAny = 0
     ptDword = 1
@@ -126,8 +134,9 @@ class ParamType(enum.Enum):
     ptTime = 6
     ptByteBuffer = 7
     ptBinary = 8
-    ptRect = 9               # 4x4int
+    ptRect = 9  # 4x4int
     ptLast = None
+
 
 class Method(enum.Enum):
     miAddUser = 0
@@ -138,7 +147,7 @@ class Method(enum.Enum):
     miDelSchedule = 5
     miSetSchedule = 6
     miSetConfig = 7
-    #miSetAPBStorage = 8
+    # miSetAPBStorage = 8
     miSyncronizeDateTime = 9
     miGetComponentState = 0x0A
     miResetAlarm = 0x0B
@@ -148,30 +157,32 @@ class Method(enum.Enum):
     miRescanDevices = 0x0F
     miNewSubscriber = 0x10
     miUpdateSchedules = 0x11
-    miClearAPBBit = 0x15            # Clear APB bit for user or for all users in device
-    miBackupDatabase = 0x16         # Backup parsec database
+    miClearAPBBit = 0x15  # Clear APB bit for user or for all users in device
+    miBackupDatabase = 0x16  # Backup parsec database
     miDelDevice = 0x18
     miUpdateComponent = 0x22
     miUpdatePart = 0x23
-    miRequestConfig = 0x24          # Get configuration from device
-    miCompleteMethod = 0x25         # After method complete
-    miUpdateChannel = 0x26          # Update channel info
+    miRequestConfig = 0x24  # Get configuration from device
+    miCompleteMethod = 0x25  # After method complete
+    miUpdateChannel = 0x26  # Update channel info
     miHalControl = 0x27
-    miHalEnableUpdate = 0x28        # Replication client update notification
+    miHalEnableUpdate = 0x28  # Replication client update notification
     miSetGuard = 0x29
     miClearGuard = 0x30
     miDetachDevice = 0x31
-    miUpdateDeviceDB = 0x32         # Update whole device db, use DBConfig* as data
+    miUpdateDeviceDB = 0x32  # Update whole device db use DBConfig* as data
     miLast = None
 
+
 class TaskMethods(enum.Enum):
-    miResumeTask = 1                # Resume paused task. Called as a command from UI or from another task
-    miPauseTask = 2                 # Pause scheduled task. Called as a command from UI or from another task
-    miRunTask = 3                   # Pause scheduled task. Called as a command from taskeditor UI or from monitor
+    miResumeTask = 1  # Resume paused task. Called as a command from UI or from another task
+    miPauseTask = 2  # Pause scheduled task. Called as a command from UI or from another task
+    miRunTask = 3  # Pause scheduled task. Called as a command from taskeditor UI or from monitor
     miGetTaskState = 4
     miNewTaskSubscriber = 5
     miTextMessage = 6
     miTaskLast = None
+
 
 class VideoMethods(enum.Enum):
     miStartRecord = 1
@@ -183,6 +194,7 @@ class VideoMethods(enum.Enum):
     miTakeSnapshot = 7
     miTakeSnapshotHistory = 8
     miVideoLast = None
+
 
 class ErrorCodes(enum.Enum):
     errNotImplemented = 1
@@ -210,6 +222,7 @@ class ErrorCodes(enum.Enum):
     ecScanHardwareStopped = errLast + 6 + 0x20000
     ecWorkstationAddressChanged = errLast + 8 + 0x20000
 
+
 class EventCodes(enum.Enum):
     ecIdentity = 0x0301
     ecState = 0x0302
@@ -217,6 +230,7 @@ class EventCodes(enum.Enum):
     ecConfigurationLoaded = 0x0304
     ecCardOnDeviceIn = 0x0305
     ecCardOnDeviceOut = 0x0306
+
 
 class MessageCategory(enum.Enum):
     Status = (1 << 0)
@@ -238,6 +252,7 @@ class MessageCategory(enum.Enum):
     NoAccessEnter = (1 << 16)
     NoAccessExit = (1 << 17)
 
+
 class DevicePartType(enum.Enum):
     DeviceComponent = 0
     SensorPart = 1
@@ -249,10 +264,12 @@ class DevicePartType(enum.Enum):
     GroupComponent = 7
     SystemPart = 8
 
+
 class DevicePartFlagBit(enum.Enum):
     Disabled = 63
     Managed = 62
     ElevatorFloor = 1
+
 
 class StateBits(enum.Enum):
     InactiveState = 31
@@ -262,3 +279,31 @@ class StateBits(enum.Enum):
     DirtyState = 26
     DisabledByLicenseState = 25
 
+
+class DoorCommand(enum.Enum):
+    # Включить реле на вход
+    EnterSwitchOn = (1 << 0)
+    # Включить реле на выход
+    ExitSwitchOn = (1 << 1)
+    # Открыть дверь
+    DoorOpen = EnterSwitchOn
+    # Закрыть дверь
+    DoorClose = (1 << 2)
+    # Установить относительную блокировку
+    RelativeBlockSet = (1 << 3)
+    # Снять относительную блокировку
+    RelativeBlockClear = (1 << 4)
+    # Установить абсолютную блокировку
+    AbsoluteBlockSet = (1 << 5)
+    # Снять абсолютную блокировку
+    AbsoluteBlockClear = (1 << 6)
+    # Поставить на охрану
+    GuardSet = (1 << 7)
+    # Снять с охраны
+    GuardClear = (1 << 8)
+    # Включить доп. реле
+    AdditionalSwitchOn = (1 << 9)
+    # Выключить доп. реле
+    AdditionalSwitchOff = (1 << 10)
+    # Сброс антипассбека
+    AntipassbackClear = (1 << 11)
