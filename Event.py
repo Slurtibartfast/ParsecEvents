@@ -90,6 +90,7 @@ class Event:
             default=str,
             indent=4)
 
+    @staticmethod
     def create_command(componentId: UUID, code: int):
         result = Event()
         result.componentId = componentId
@@ -97,23 +98,3 @@ class Event:
 
         return result
 
-    """
-    def create(id : mId, parentId : mParentId, componentId : mComponentId, timestamp: mDate, \
-               method: mOperationCode, sourceType: mSourceType, subSystem: mSubSystem, \
-               dataBits: mDataBits, messageType: mMessageType, hardware: mHardware, value=None):
-        result = Event()
-        result.id = id
-        result.parentId = parentId
-        result.componentId = componentId
-        result.timestamp = timestamp
-        result.method = method
-        result.sourceType = sourceType
-        result.subSystem = subSystem
-        result.dataBits = dataBits
-        result.messageType = messageType
-        result.hardware = hardware
-        if value:
-            result.items = value
-        return result
-
-"""

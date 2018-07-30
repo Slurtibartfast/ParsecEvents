@@ -41,6 +41,7 @@ class Transport:
 
         return self.__slot
 
+    @staticmethod
     def __control_message_send(data: Event, destinationId: UUID = None, workstationId: UUID = None):
         result = Transport.CMA.CMA_SEND.value.to_bytes(length=4, byteorder="little")
         result += workstationId.bytes_le if workstationId else UUID.empty().bytes_le
