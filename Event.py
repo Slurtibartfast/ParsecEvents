@@ -110,17 +110,4 @@ class Event:
             result.items = value
         return result
 
-
-
-    def json(self):
-        return {
-            "operationCode": self.operationCode
-            "sourceType": self.sourceType
-            "subSystem": self.subSystem
-            "dataBits": self.dataBits
-            "messageType": self.messageType
-            "hardware": self.hardware
-            
-        }
-
 """

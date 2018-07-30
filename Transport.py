@@ -41,6 +41,7 @@ class Transport:
 
         return self.__slot
 
+    @staticmethod
     def __control_message_send(workstationId: uuid.UUID, destinationId: uuid.UUID, data: Event):
         result = Transport.CMA.CMA_SEND.to_bytes(length=4, byteorder="little")
         result += workstationId.bytes_le
@@ -49,5 +50,5 @@ class Transport:
         return result
 
     def send_command(self, workstationId: uuid.UUID, destinationId: uuid.UUID, data: Event):
-        win32file.WriteFile(self.__send_slot(), __control_message_send(
+        win32file.WriteFile(self.__send_slot(), self.__control_message_send(
             workstationId, destinationId, data))
