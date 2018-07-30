@@ -6,9 +6,9 @@ import transport
 from Event import Event
 import xtensions
 
-door_id = UUID.empty()
+door_id = uuid.uuid4()
 
-transport.send_command(Event.create_command(door_id, DoorCommand.DoorOpen))
+transport.send_command(Event.create_command(door_id, DoorCommand.Open))
 
 
 def received(data: Event):

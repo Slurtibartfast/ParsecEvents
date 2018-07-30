@@ -282,29 +282,14 @@ class StateBits(enum.Enum):
 
 
 class DoorCommand(enum.Enum):
-    # Включить реле на вход
-    EnterSwitchOn = (1 << 0)
-    # Включить реле на выход
-    ExitSwitchOn = (1 << 1)
-    # Открыть дверь
-    DoorOpen = EnterSwitchOn
-    # Закрыть дверь
-    DoorClose = (1 << 2)
-    # Установить относительную блокировку
-    RelativeBlockSet = (1 << 3)
-    # Снять относительную блокировку
-    RelativeBlockClear = (1 << 4)
-    # Установить абсолютную блокировку
-    AbsoluteBlockSet = (1 << 5)
-    # Снять абсолютную блокировку
-    AbsoluteBlockClear = (1 << 6)
-    # Поставить на охрану
-    GuardSet = (1 << 7)
-    # Снять с охраны
-    GuardClear = (1 << 8)
-    # Включить доп. реле
-    AdditionalSwitchOn = (1 << 9)
-    # Выключить доп. реле
-    AdditionalSwitchOff = (1 << 10)
-    # Сброс антипассбека
-    AntipassbackClear = (1 << 11)
+    Close = 0x0167
+    Open = 0x0166
+    RelativeBlockSet = 0x0164
+    RelativeBlockClear = 0x0165
+    AbsoluteBlockSet = 0x0160
+    AbsoluteBlockClear = 0x0161
+    GuardClear = 0x0163
+    GuardSet = 0x0162
+    Open4Exit = 0x0170
+    Open4Enter = 0x0171
+    APBClear = 0x016E
