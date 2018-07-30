@@ -1,19 +1,18 @@
 import json
-import uuid
+from uuid import UUID
 from datetime import datetime
 from struct import unpack
-
-from CommonEnums import MessageType, SourceType, DataBit, Method
+from CommonEnums import *
 from EventItem import EventItem
+import xtensions
 
 
-# привет
 class Event:
     def __init__(self):
-        self.id = None
-        self.parentId = None
-        self.componentId = None
-        self.timestamp = None
+        self.id = UUID.empty()
+        self.parentId = UUID.empty()
+        self.componentId = UUID.empty()
+        self.timestamp = datetime.now()
         self.code = 0
         self.method = Method.miAddUser
         self.sourceType = SourceType.stErrRestore
@@ -30,13 +29,13 @@ class Event:
         # skip 36 bytes envelope
         offset = 36
 
-        result.id = uuid.UUID(bytes_le=bytes(value[offset:offset + 16]))
+        result.id = UUID(bytes_le=bytes(value[offset:offset + 16]))
         offset += 16
 
-        result.parentId = uuid.UUID(bytes_le=bytes(value[offset:offset + 16]))
+        result.parentId = UUID(bytes_le=bytes(value[offset:offset + 16]))
         offset += 16
 
-        result.componentId = uuid.UUID(bytes_le=bytes(value[offset:offset + 16]))
+        result.componentId = UUID(bytes_le=bytes(value[offset:offset + 16]))
         offset += 16
 
         time, \
@@ -65,7 +64,7 @@ class Event:
         result = self.id.bytes_le
         result += self.parentId.bytes_le
         result += self.componentId.bytes_le
-        result += int(self.timestamp.timestamp()).to_bytes(length=4, byteorder="little")
+        result += int(self.timestamp.timestamp()).to_bytes(length=8, byteorder="little")
         result += self.code.to_bytes(length=4, byteorder="little")
         result += len(self.items).to_bytes(length=4, byteorder="little")
 
@@ -90,6 +89,13 @@ class Event:
             "items": list(map(lambda x: x.json(), self.items))},
             default=str,
             indent=4)
+
+    def create_command(componentId: UUID, code: int):
+        result = Event()
+        result.componentId = componentId
+        result.code = (MessageType.mtCommand.value << 24) | (code & 0x00ffffff)
+
+        return result
 
     """
     def create(id : mId, parentId : mParentId, componentId : mComponentId, timestamp: mDate, \

@@ -1,12 +1,7 @@
 import datetime
-import json
 import struct
 import uuid
-from struct import unpack
-from typing import List
-
 from CommonEnums import ParamKey, ParamType
-
 
 class EventItem:
     binarySize = 20
@@ -117,6 +112,3 @@ class EventItem:
             raise Exception()
 
         self.__data[0:len(bytesValue)] = bytesValue
-
-
-EventItems = List[EventItem]

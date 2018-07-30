@@ -1,5 +1,5 @@
 import enum
-import uuid
+from uuid import UUID
 from Event import Event
 import win32file
 import xtensions
@@ -41,14 +41,13 @@ class Transport:
 
         return self.__slot
 
-    @staticmethod
-    def __control_message_send(workstationId: uuid.UUID, destinationId: uuid.UUID, data: Event):
-        result = Transport.CMA.CMA_SEND.to_bytes(length=4, byteorder="little")
-        result += workstationId.bytes_le
-        result += destinationId.bytes_le
+    def __control_message_send(data: Event, destinationId: UUID = None, workstationId: UUID = None):
+        result = Transport.CMA.CMA_SEND.value.to_bytes(length=4, byteorder="little")
+        result += workstationId.bytes_le if workstationId else UUID.empty().bytes_le
+        result += destinationId.bytes_le if destinationId else data.componentId.bytes_le
         result += data.to_bytes()
         return result
 
-    def send_command(self, workstationId: uuid.UUID, destinationId: uuid.UUID, data: Event):
-        win32file.WriteFile(self.__send_slot(), self.__control_message_send(
-            workstationId, destinationId, data))
+    def send_command(self, data: Event, destinationId: UUID = None, workstationId: UUID = None):
+        win32file.WriteFile(self.__send_slot(), Transport.__control_message_send(
+            data, destinationId, workstationId))
