@@ -232,7 +232,7 @@ class EventCodes(enum.Enum):
     ecCardOnDeviceOut = 0x0306
 
 
-class MessageCategory(enum.Enum):
+class MessageCategory(enum.IntFlag):
     Status = (1 << 0)
     AlarmControl = (1 << 1)
     Instant = (1 << 2)
@@ -251,6 +251,7 @@ class MessageCategory(enum.Enum):
     HardwareDiagnostics = (1 << 15)
     NoAccessEnter = (1 << 16)
     NoAccessExit = (1 << 17)
+    All = 0xffffffffffffffff
 
 
 class DevicePartType(enum.Enum):

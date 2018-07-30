@@ -3,6 +3,7 @@ import struct
 import uuid
 from CommonEnums import ParamKey, ParamType
 
+
 class EventItem:
     binarySize = 20
 
@@ -82,33 +83,33 @@ class EventItem:
         if self.type == ParamType.ptGuid:
             if type(value) is not uuid.UUID:
                 raise Exception()
-            bytesValue = value.bytes_le
+            bytes_value = value.bytes_le
         elif self.type == ParamType.ptChar:
             if type(value) is not str:
                 raise Exception()
-            bytesValue = value.encode(encoding="ascii")
+            bytes_value = value.encode(encoding="ascii")
         elif self.type == ParamType.ptDouble:
             if type(value) is not float:
                 raise Exception()
-            bytesValue = struct.pack("d", float(value))
+            bytes_value = struct.pack("d", float(value))
         elif self.type == ParamType.ptDword:
             if type(value) is not int:
                 raise Exception()
-            bytesValue = value.to_bytes(length=4, byteorder="little")
+            bytes_value = value.to_bytes(length=4, byteorder="little")
         elif self.type == ParamType.ptI64:
             if type(value) is not int:
                 raise Exception()
-            bytesValue = value.to_bytes(length=8, byteorder="little")
+            bytes_value = value.to_bytes(length=8, byteorder="little")
         elif self.type == ParamType.ptTime:
             if type(value) is not datetime.datetime:
                 raise Exception()
-            bytesValue = int(value.timestamp()).to_bytes(length=4, byteorder="little")
+            bytes_value = int(value.timestamp()).to_bytes(length=4, byteorder="little")
         elif self.type == ParamType.ptByteBuffer:
             if (type(value) is bytes) or (type(value) is bytearray):
-                bytesValue = value
+                bytes_value = value
             else:
                 raise Exception()
         else:
             raise Exception()
 
-        self.__data[0:len(bytesValue)] = bytesValue
+        self.__data[0:len(bytes_value)] = bytes_value
