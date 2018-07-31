@@ -55,3 +55,20 @@ def operator_id_set(self, value):
 Event.operator_id = property(operator_id_get, operator_id_set)
 
 # ----------------------------------------
+
+# add Event.user_id property
+
+def user_id_get(self):
+    found = self.find_items(ParamKey.pkUser, ParamType.ptGuid)
+    return found[0].data if len(found) > 0 else None
+
+def user_id_set(self, value):
+    found = self.find_items(ParamKey.pkUser, ParamType.ptGuid)
+    if len(found) == 0:
+        self.items.add(EventItem.create(ParamKey.pkUser, ParamType.ptGuid, value))
+    else:
+        found[0].data = value
+
+Event.user_id = property(user_id_get, user_id_set)
+
+#-----------------------------------------
