@@ -24,6 +24,28 @@ class Event:
         self.items = []
 
     @staticmethod
+    def create_command(code, destination_id: UUID):
+        if isinstance(code, Enum):
+            code = code.value
+
+        result = Event()
+        result.component_id = destination_id
+        result.code = (MessageType.mtCommand.value << 24) | (code & 0x00ffffff)
+
+        return result
+
+    @staticmethod
+    def create_event(code, source_id: UUID):
+        if isinstance(code, Enum):
+            code = code.value
+
+        result = Event()
+        result.component_id = source_id
+        result.code = (MessageType.mtEvent.value << 24) | (code & 0x00ffffff)
+
+        return result
+
+    @staticmethod
     def from_bytes(value: bytes):
         result = Event()
 
@@ -89,14 +111,5 @@ class Event:
             default=str,
             indent=4)
 
-    @staticmethod
-    def create_command(component_id: UUID, code):
-        if isinstance(code, Enum):
-            code = code.value
-
-        result = Event()
-        result.component_id = component_id
-        result.code = (MessageType.mtCommand.value << 24) | (code & 0x00ffffff)
-
-        return result
-
+    def find_items(self, key: ParamKey, type: ParamType = None):
+        return [x for x in self.items if x.key == key and (type is None or x.type == type)]

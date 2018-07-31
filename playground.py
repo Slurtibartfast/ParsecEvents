@@ -3,12 +3,19 @@ from uuid import UUID
 
 from CommonEnums import *
 import transport
-from Event import Event
+from Event_old import Event
 import xtensions
+from EventItem import EventItem
+import event_xtensions
+
+test = Event.create_command(10,uuid.uuid4())
+test.items.append(EventItem.create(ParamKey.pkWorkstation, ParamType.ptGuid, uuid.uuid4()))
+
+w_id = test.workstation_id
 
 door_id = uuid.uuid4()
 
-transport.send_command(Event.create_command(door_id, DoorCommand.Open))
+transport.send_command(DoorCommand.Open, door_id)
 
 
 def received(data: Event):
@@ -19,4 +26,9 @@ soures = [UUID("{1e896af9-0df0-46fb-b501-97dfe2453015}"), UUID("{dfbb1f3b-2641-4
           UUID("{60b5b66d-0def-4529-bc77-f680f532cd87}"), UUID("{b96092e7-51f0-4148-9cb2-0502a0210d45}")]
 listener = transport.listen_events_from(received, soures)
 
-listener.join()
+user_input = input()
+while user_input != "exit":
+    print(user_input)
+    user_input = input()
+
+listener.stop()

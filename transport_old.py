@@ -1,6 +1,6 @@
 import enum
 from uuid import UUID
-from Event import Event
+from Event_old import Event
 import win32file
 import xtensions
 

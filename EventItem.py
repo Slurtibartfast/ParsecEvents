@@ -15,7 +15,7 @@ class EventItem:
         self.__data = bytearray(16)
 
     @staticmethod
-    def create(key: ParamKey, type: ParamType, instance: int = 0, value=None):
+    def create(key: ParamKey, type: ParamType, value=None, instance: int = 0):
         result = EventItem()
         result.key = key
         result.type = type

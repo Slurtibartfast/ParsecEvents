@@ -4,10 +4,58 @@ import threading
 from uuid import UUID
 
 from CommonEnums import MessageCategory
-from Event import Event
+from Event_old import Event
 import win32file
 import pywintypes
 import xtensions
+import event_xtensions
+
+
+def send_command(code,
+                 destination_id: UUID,
+                 workstation_id: UUID = None,
+                 operator_id: UUID = None):
+    event = Event.create_command(code, destination_id)
+
+    if workstation_id:
+        event.workstation_id = workstation_id
+
+    if operator_id:
+        event.operator_id = operator_id
+
+    send_command_data(event)
+
+
+def send_command_data(data: Event):
+    send_control_message(control_message_send(data, data.workstation_id()))
+
+
+def send_event(code,
+               source_id: UUID,
+               destinations: list,
+               categories: MessageCategory):
+    event = Event.create_event(code, source_id)
+    send_event_data(event, destinations, categories)
+
+
+def send_event_data(data: Event,
+                    destinations: list,
+                    categories: MessageCategory):
+    send_control_message(control_message_event(data, destinations, categories))
+
+
+def listen_events_from(callback,
+                       sources: list,
+                       categories: MessageCategory = MessageCategory.All):
+    result = EventsListener(callback, sources, categories)
+    result.start()
+    return result
+
+
+def listen_commands_to(callback, destinations: list):
+    result = CommandsListener(callback, destinations)
+    result.start()
+    return result
 
 
 class CMA(enum.Enum):
@@ -24,11 +72,40 @@ def transport_control_slot():
     return r"\\.\mailslot\parsec_transport_control"
 
 
-def control_message_send(data: Event, destination_id: UUID = None, workstation_id: UUID = None):
+def control_message_send(data: Event, workstation_id: UUID = None):
     result = CMA.CMA_SEND.value.to_bytes(length=4, byteorder="little")
     result += workstation_id.bytes_le if workstation_id else UUID.empty().bytes_le
-    result += destination_id.bytes_le if destination_id else data.component_id.bytes_le
+    result += data.component_id.bytes_le
     result += data.to_bytes()
+    return result
+
+
+def control_message_event(data: Event, destinations: list, categories: MessageCategory):
+    result = CMA.CMA_EVENT.value.to_bytes(length=4, byteorder="little")
+    result += categories.value.to_bytes(length=8, byteorder="little")
+    result += len(destinations).to_bytes(length=4, byteorder="little")
+    result += bytes(8)
+    result += data.to_bytes()
+
+    for destination in destinations:
+        result += destination.bytes_le
+
+    return result
+
+
+def __control_message_generic(action: CMA, listener_id: UUID, ids: list):
+    result = action.value.to_bytes(length=4, byteorder="little")
+
+    buffer = bytearray(256)
+    buffer[:72] = str(listener_id).encode("utf-16-le")
+    result += buffer
+
+    result += bytearray(4)
+    result += len(ids).to_bytes(length=4, byteorder="little")
+
+    for source in ids:
+        result += source.bytes_le
+
     return result
 
 
@@ -49,19 +126,11 @@ def control_message_subscribe(listener_id: UUID, sources: list, categories: Mess
 
 
 def control_message_unsubscribe(listener_id: UUID, sources: list):
-    result = CMA.CMA_UNSUBSCRIBE.value.to_bytes(length=4, byteorder="little")
+    return __control_message_generic(CMA.CMA_UNSUBSCRIBE, listener_id, sources)
 
-    buffer = bytearray(256)
-    buffer[:72] = str(listener_id).encode("utf-16-le")
-    result += buffer
 
-    result += bytearray(4)
-    result += len(sources).to_bytes(length=4, byteorder="little")
-
-    for source in sources:
-        result += source.bytes_le
-
-    return result
+def control_message_register(listener_id: UUID, destinations: list):
+    return __control_message_generic(CMA.CMA_REGISTER, listener_id, destinations)
 
 
 def send_control_message(data: bytes):
@@ -76,17 +145,8 @@ def send_control_message(data: bytes):
     win32file.CloseHandle(slot)
 
 
-def send_command(data: Event, destination_id: UUID = None, workstation_id: UUID = None):
-    send_control_message(control_message_send(data, destination_id, workstation_id))
-
-
-def listen_events_from(callback, sources: list, categories: MessageCategory = MessageCategory.All):
-    result = EventsListener(sources, categories, callback)
-    result.start()
-    return result
-
-
 class __Listener(threading.Thread):
+
     def __init__(self, callback):
         super().__init__()
         self.id = uuid.uuid4()
@@ -96,8 +156,7 @@ class __Listener(threading.Thread):
         self.__callback = callback
 
     def __del__(self):
-        if self.__slot:
-            win32file.CloseHandle(self.__slot)
+        self.stop()
 
     def run(self):
         self.__stopped.clear()
@@ -108,7 +167,9 @@ class __Listener(threading.Thread):
 
         try:
             self.__slot = win32file.CreateMailslot(self.__slot_name, 0, timeout, None)
-            while not self.is_stopped():
+            self._subscribe()
+
+            while not self.__is_stopped():
                 try:
                     result, data = win32file.ReadFile(self.__slot, buffer_size, None)
                     if result == 0:
@@ -122,23 +183,45 @@ class __Listener(threading.Thread):
                 win32file.CloseHandle(self.__slot)
 
             self.__slot = None
+            self._unsubscribe()
+
+    def _subscribe(self):
+        pass
+
+    def _unsubscribe(self):
+        pass
 
     def stop(self):
-        self.__stopped.set()
-        self.join()
+        if self.is_alive():
+            self.__stopped.set()
+            self.join()
 
-    def is_stopped(self):
-        self.__stopped.is_set()
+    def __is_stopped(self):
+        return self.__stopped.is_set()
 
 
 class EventsListener(__Listener):
 
-    def __init__(self, sources: list, categories: MessageCategory, callback):
+    def __init__(self, callback, sources: list, categories: MessageCategory):
         super().__init__(callback)
         self.sources = sources
         self.categories = categories
 
-    def run(self):
+    def _subscribe(self):
         send_control_message(control_message_subscribe(self.id, self.sources, self.categories))
-        super().run()
+
+    def _unsubscribe(self):
         send_control_message(control_message_unsubscribe(self.id, self.sources))
+
+
+class CommandsListener(__Listener):
+
+    def __init__(self, callback, destinations: list):
+        super().__init__(callback)
+        self.destinations = destinations
+
+    def _subscribe(self):
+        send_control_message(control_message_register(self.id, self.destinations))
+
+    def _unsubscribe(self):
+        send_control_message(control_message_unsubscribe(self.id, self.destinations))
