@@ -113,6 +113,14 @@ class Event:
     def find_items(self, key: ParamKey, type: ParamType = None):
         return [x for x in self.items if x.key == key and (type is None or x.type == type)]
 
+    def find_item(self, key: ParamKey, type: ParamType, instance: int):
+        result = None
+        for x in self.items:
+            if x.key == key and x.type == type and x.instance == instance:
+                result = x
+                break
+        return result
+
 
 class EventItem:
     binarySize = 20

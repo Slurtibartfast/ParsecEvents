@@ -6,6 +6,14 @@ import transport
 from event import Event
 import xtensions
 
+
+test = Event()
+user_id = uuid.uuid4()
+print(user_id)
+test.user_id = user_id
+print(test.user_id)
+
+
 door_id = uuid.uuid4()
 
 transport.send_command(DoorCommand.Open, door_id)
