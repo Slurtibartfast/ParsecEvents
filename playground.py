@@ -1,14 +1,13 @@
 import uuid
 from uuid import UUID
 
-from CommonEnums import *
+from constants import *
 import transport
-from Event_old import Event
+from event import Event
 import xtensions
-from EventItem import EventItem
-import event_xtensions
+from event import EventItem
 
-test = Event.create_command(10,uuid.uuid4())
+test = Event.create_command(10, uuid.uuid4())
 test.items.append(EventItem.create(ParamKey.pkWorkstation, ParamType.ptGuid, uuid.uuid4()))
 
 w_id = test.workstation_id

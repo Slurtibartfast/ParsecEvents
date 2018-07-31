@@ -3,12 +3,11 @@ import uuid
 import threading
 from uuid import UUID
 
-from CommonEnums import MessageCategory
-from Event_old import Event
+from constants import MessageCategory
+from event import Event
 import win32file
 import pywintypes
 import xtensions
-import event_xtensions
 
 
 def send_command(code,
@@ -27,7 +26,7 @@ def send_command(code,
 
 
 def send_command_data(data: Event):
-    send_control_message(control_message_send(data, data.workstation_id()))
+    send_control_message(control_message_send(data, data.workstation_id))
 
 
 def send_event(code,
