@@ -26,7 +26,7 @@ def send_command(code,
 
 
 def send_command_data(data: Event):
-    send_control_message(control_message_send(data, data.workstation_id))
+    _send_control_message(_control_message_send(data, data.workstation_id))
 
 
 def send_event(code,
@@ -40,7 +40,7 @@ def send_event(code,
 def send_event_data(data: Event,
                     destinations: list,
                     categories: MessageCategory):
-    send_control_message(control_message_event(data, destinations, categories))
+    _send_control_message(_control_message_event(data, destinations, categories))
 
 
 def listen_events_from(callback,
@@ -57,7 +57,7 @@ def listen_commands_to(callback, destinations: list):
     return result
 
 
-class CMA(enum.Enum):
+class _CMA(enum.Enum):
     CMA_SUBSCRIBE = 1
     CMA_SEND = 2
     CMA_EVENT = 3
@@ -67,20 +67,20 @@ class CMA(enum.Enum):
     CMA_STOREDATA = 10
 
 
-def transport_control_slot():
+def _transport_control_slot():
     return r"\\.\mailslot\parsec_transport_control"
 
 
-def control_message_send(data: Event, workstation_id: UUID = None):
-    result = CMA.CMA_SEND.value.to_bytes(length=4, byteorder="little")
+def _control_message_send(data: Event, workstation_id: UUID = None):
+    result = _CMA.CMA_SEND.value.to_bytes(length=4, byteorder="little")
     result += workstation_id.bytes_le if workstation_id else UUID.empty().bytes_le
     result += data.component_id.bytes_le
     result += data.to_bytes()
     return result
 
 
-def control_message_event(data: Event, destinations: list, categories: MessageCategory):
-    result = CMA.CMA_EVENT.value.to_bytes(length=4, byteorder="little")
+def _control_message_event(data: Event, destinations: list, categories: MessageCategory):
+    result = _CMA.CMA_EVENT.value.to_bytes(length=4, byteorder="little")
     result += categories.value.to_bytes(length=8, byteorder="little")
     result += len(destinations).to_bytes(length=4, byteorder="little")
     result += bytes(8)
@@ -92,7 +92,7 @@ def control_message_event(data: Event, destinations: list, categories: MessageCa
     return result
 
 
-def __control_message_generic(action: CMA, listener_id: UUID, ids: list):
+def _control_message_generic(action: _CMA, listener_id: UUID, ids: list):
     result = action.value.to_bytes(length=4, byteorder="little")
 
     buffer = bytearray(256)
@@ -108,8 +108,8 @@ def __control_message_generic(action: CMA, listener_id: UUID, ids: list):
     return result
 
 
-def control_message_subscribe(listener_id: UUID, sources: list, categories: MessageCategory):
-    result = CMA.CMA_SUBSCRIBE.value.to_bytes(length=4, byteorder="little")
+def _control_message_subscribe(listener_id: UUID, sources: list, categories: MessageCategory):
+    result = _CMA.CMA_SUBSCRIBE.value.to_bytes(length=4, byteorder="little")
 
     buffer = bytearray(256)
     buffer[:72] = str(listener_id).encode("utf-16-le")
@@ -124,16 +124,16 @@ def control_message_subscribe(listener_id: UUID, sources: list, categories: Mess
     return result
 
 
-def control_message_unsubscribe(listener_id: UUID, sources: list):
-    return __control_message_generic(CMA.CMA_UNSUBSCRIBE, listener_id, sources)
+def _control_message_unsubscribe(listener_id: UUID, sources: list):
+    return _control_message_generic(_CMA.CMA_UNSUBSCRIBE, listener_id, sources)
 
 
-def control_message_register(listener_id: UUID, destinations: list):
-    return __control_message_generic(CMA.CMA_REGISTER, listener_id, destinations)
+def _control_message_register(listener_id: UUID, destinations: list):
+    return _control_message_generic(_CMA.CMA_REGISTER, listener_id, destinations)
 
 
-def send_control_message(data: bytes):
-    slot = win32file.CreateFile(transport_control_slot(),
+def _send_control_message(data: bytes):
+    slot = win32file.CreateFile(_transport_control_slot(),
                                 win32file.GENERIC_WRITE,
                                 win32file.FILE_SHARE_READ,
                                 None,
@@ -207,10 +207,10 @@ class EventsListener(__Listener):
         self.categories = categories
 
     def _subscribe(self):
-        send_control_message(control_message_subscribe(self.id, self.sources, self.categories))
+        _send_control_message(_control_message_subscribe(self.id, self.sources, self.categories))
 
     def _unsubscribe(self):
-        send_control_message(control_message_unsubscribe(self.id, self.sources))
+        _send_control_message(_control_message_unsubscribe(self.id, self.sources))
 
 
 class CommandsListener(__Listener):
@@ -220,7 +220,7 @@ class CommandsListener(__Listener):
         self.destinations = destinations
 
     def _subscribe(self):
-        send_control_message(control_message_register(self.id, self.destinations))
+        _send_control_message(_control_message_register(self.id, self.destinations))
 
     def _unsubscribe(self):
-        send_control_message(control_message_unsubscribe(self.id, self.destinations))
+        _send_control_message(_control_message_unsubscribe(self.id, self.destinations))
