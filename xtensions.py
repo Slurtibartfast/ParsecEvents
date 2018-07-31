@@ -52,6 +52,6 @@ def operator_id_set(self, value):
         found[0].data = value
 
 
-Event.operator_ie = property(operator_id_get, operator_id_set)
+Event.operator_id = property(operator_id_get, operator_id_set)
 
 # ----------------------------------------
