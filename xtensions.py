@@ -62,10 +62,10 @@ def user_id_get(self):
     found = self.find_items(ParamKey.pkUser, ParamType.ptGuid)
     return found[0].data if len(found) > 0 else None
 
-def user_id_set(self, value):
-    found = self.find_items(ParamKey.pkUser, ParamType.ptGuid)
+def user_id_set(self, value, instance):
+    found = self.find_items(ParamKey.pkUser, ParamType.ptGuid, instance)
     if len(found) == 0:
-        self.items.add(EventItem.create(ParamKey.pkUser, ParamType.ptGuid, value))
+        self.items.add(EventItem.create(ParamKey.pkUser, ParamType.ptGuid, value, instance))
     else:
         found[0].data = value
 
