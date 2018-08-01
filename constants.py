@@ -1,7 +1,9 @@
-import enum
+from enum import Enum, IntFlag
+
+parsec_directory = r"c:\Users\All Users\MDO\ParsecNET 3\\"[:-1]
 
 
-class ComponentMask(enum.Enum):
+class ComponentMask(Enum):
     DoorBit = 0
     TwoReaderBit = 1
     APBBit = 2
@@ -23,7 +25,7 @@ class ComponentMask(enum.Enum):
     DisabledByLicense = 63
 
 
-class SourceType(enum.Enum):
+class SourceType(Enum):
     stErrRestore = 0
     stNC = 1
     stAC = 2
@@ -37,7 +39,7 @@ class SourceType(enum.Enum):
     stLast = 255
 
 
-class CodeType(enum.Enum):
+class CodeType(Enum):
     # The type of user identifier
     ctParsecAccess = 0
     ctParsecGuard = 1
@@ -50,7 +52,7 @@ class CodeType(enum.Enum):
     ctLast = 255
 
 
-class Privileges(enum.Enum):
+class Privileges(Enum):
     canSoundOff = 0x0001
     canDoorArmDisarm = 0x0002
     canCrossLock = 0x0004
@@ -72,7 +74,7 @@ class Privileges(enum.Enum):
     canStrictCheckReturnTime = 0x040000
 
 
-class MessageType(enum.Enum):
+class MessageType(Enum):
     # for transactions match category
     mtEvent = 0
     mtState = 1
@@ -83,7 +85,7 @@ class MessageType(enum.Enum):
     mtInvoke = 7
 
 
-class ParamKey(enum.Enum):
+class ParamKey(Enum):
     pkAny = 0
     pkUser = 2  # user
     pkCommandData = 4
@@ -113,7 +115,7 @@ class ParamKey(enum.Enum):
     pkTextSubject = 28
 
 
-class DataBit(enum.IntFlag):
+class DataBit(IntFlag):
     dbUndefined = 0
     dbComponent = 1
     dbWorkStation = 2
@@ -124,7 +126,7 @@ class DataBit(enum.IntFlag):
     dbLast = 256
 
 
-class ParamType(enum.Enum):
+class ParamType(Enum):
     ptAny = 0
     ptDword = 1
     ptDouble = 2
@@ -138,7 +140,7 @@ class ParamType(enum.Enum):
     ptLast = None
 
 
-class Method(enum.Enum):
+class Method(Enum):
     miAddUser = 0
     miSetUser = 1
     miDelUser = 2
@@ -174,7 +176,7 @@ class Method(enum.Enum):
     miLast = None
 
 
-class TaskMethods(enum.Enum):
+class TaskMethods(Enum):
     miResumeTask = 1  # Resume paused task. Called as a command from UI or from another task
     miPauseTask = 2  # Pause scheduled task. Called as a command from UI or from another task
     miRunTask = 3  # Pause scheduled task. Called as a command from taskeditor UI or from monitor
@@ -184,7 +186,7 @@ class TaskMethods(enum.Enum):
     miTaskLast = None
 
 
-class VideoMethods(enum.Enum):
+class VideoMethods(Enum):
     miStartRecord = 1
     miStopRecord = 2
     miArmCamera = 3
@@ -196,7 +198,7 @@ class VideoMethods(enum.Enum):
     miVideoLast = None
 
 
-class ErrorCodes(enum.Enum):
+class ErrorCodes(Enum):
     errNotImplemented = 1
     errPortNotFound = 2
     errDeviceNotFound = 3
@@ -223,7 +225,7 @@ class ErrorCodes(enum.Enum):
     ecWorkstationAddressChanged = errLast + 8 + 0x20000
 
 
-class EventCodes(enum.Enum):
+class EventCodes(Enum):
     ecIdentity = 0x0301
     ecState = 0x0302
     ecCardOnDevice = 0x0303
@@ -232,7 +234,7 @@ class EventCodes(enum.Enum):
     ecCardOnDeviceOut = 0x0306
 
 
-class MessageCategory(enum.IntFlag):
+class MessageCategory(IntFlag):
     Status = (1 << 0)
     AlarmControl = (1 << 1)
     Instant = (1 << 2)
@@ -254,7 +256,7 @@ class MessageCategory(enum.IntFlag):
     All = 0xffffffffffffffff
 
 
-class DevicePartType(enum.Enum):
+class DevicePartType(Enum):
     DeviceComponent = 0
     SensorPart = 1
     DrivePart = 2
@@ -266,13 +268,13 @@ class DevicePartType(enum.Enum):
     SystemPart = 8
 
 
-class DevicePartFlagBit(enum.Enum):
+class DevicePartFlagBit(Enum):
     Disabled = 63
     Managed = 62
     ElevatorFloor = 1
 
 
-class StateBits(enum.Enum):
+class StateBits(Enum):
     InactiveState = 31
     UndefinedState = 30
     DisabledState = 28
@@ -281,7 +283,7 @@ class StateBits(enum.Enum):
     DisabledByLicenseState = 25
 
 
-class DoorCommand(enum.Enum):
+class DoorCommand(Enum):
     Close = 0x0167
     Open = 0x0166
     RelativeBlockSet = 0x0164
