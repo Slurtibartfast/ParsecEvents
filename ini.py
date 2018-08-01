@@ -73,8 +73,6 @@ class file_exchange:
 def __read():
     config = ConfigParser()
 
-    print(constants.parsec_directory + 'parsec.ini')
-
     # parse existing file
     config.read(constants.parsec_directory + 'parsec.ini')
 
