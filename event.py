@@ -34,6 +34,21 @@ class Event:
         return result
 
     @staticmethod
+    def create_relay_command(code, destination_id: UUID, part_id: UUID):
+        if isinstance(code, Enum):
+            code = code.value
+
+        item = EventItem.create(ParamKey.pkPart, ParamType.ptGuid, part_id)
+
+        result = Event()
+        result.component_id = destination_id
+        result.code = (MessageType.mtCommand.value << 24) | (code & 0x00ffffff)
+        result.items.append(item)
+
+        print(Event.json(result))
+        return result
+
+    @staticmethod
     def create_event(code, source_id: UUID):
         if isinstance(code, Enum):
             code = code.value
@@ -106,7 +121,7 @@ class Event:
             "dataBits": self.dataBits,
             "messageType": self.messageType,
             "hardware": self.hardware,
-            "items": list(map(lambda x: x.json(), self.items))},
+            "items": list(map(lambda x: x.json, self.items))},
             default=str,
             indent=4)
 
@@ -166,13 +181,15 @@ class EventItem:
 
         return header.to_bytes(4, "little") + self.__data
 
+    @property
     def json(self):
         return {
             "key": self.key,
             "type": self.type,
             "instance": self.instance,
-            "data": self.data,
-        }
+            "data": self.data},
+    #         default=str,
+    #         indent=4)
 
     @property
     def data(self):

@@ -24,6 +24,21 @@ def send_command(code,
 
     send_command_data(event)
 
+def send_relay_command(code,
+                       destination_id: UUID,
+                       part_id: UUID,
+                       workstation_id: UUID = None,
+                       operator_id: UUID = None):
+    event = Event.create_relay_command(code, destination_id, part_id)
+
+    if workstation_id:
+        event.workstation_id = workstation_id
+
+    if operator_id:
+        event.operator_id = operator_id
+
+    send_command_data(event)
+
 
 def send_command_data(data: Event):
     _send_control_message(_control_message_send(data, data.workstation_id))
