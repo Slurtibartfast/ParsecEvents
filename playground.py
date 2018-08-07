@@ -3,16 +3,17 @@ from uuid import UUID
 
 from constants import *
 import transport
-from event import Event
+# from event import Event
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 import xtensions
 
 token = 'de69daa37e9b587a3f23878c9d60514b484d946af62eb910712d0fce3edfc5cb2bd4e5d8a61474b6d2e17'
 my_vk_id = 4073426
-nc_8k_144_door = 'D874D77B-409A-4505-9866-414E7D722A8E'         # NC-8000 192.168.0.144
-nc_8k_144_drive = '71914484-1072-47BB-B825-5D820B062F4A'        #component 0
-nc_8k_144_relay = 'C53016D1-3E70-44EB-B2FB-BCDE6F8E02D1'            #part relay
+nc_8k_144_door = 'D874D77B-409A-4505-9866-414E7D722A8E'         # NC-8000 192.168.0.144 door
+nc_8k_144_drive = '71914484-1072-47BB-B825-5D820B062F4A'        # component 0
+nc_8k_144_relay = 'C53016D1-3E70-44EB-B2FB-BCDE6F8E02D1'        # part relay
+part_no = 33554433
 vk_session = vk_api.VkApi(token=token)
 vk = vk_session.get_api()
 longpoll = VkLongPoll(vk_session)
@@ -33,8 +34,15 @@ for event in longpoll.listen():
 
         elif event.user_id == my_vk_id and event.text == '/р':
             drive_id = uuid.UUID(nc_8k_144_drive)
-            relay_id = uuid.UUID(nc_8k_144_relay)
-            transport.send_relay_command(RelayCommand.On, drive_id, relay_id)
+            transport.send_relay_command(RelayCommand.On, drive_id, part_no)
+            vk.messages.send(
+                user_id=event.user_id,
+                message='Выполняю команду: Включить реле(nc-8k-144)'
+            )
+
+        elif event.user_id == my_vk_id and event.text == '/рвык':
+            drive_id = uuid.UUID(nc_8k_144_drive)
+            transport.send_relay_command(RelayCommand.Off, drive_id, part_no)
             vk.messages.send(
                 user_id=event.user_id,
                 message='Выполняю команду: Включить реле(nc-8k-144)'

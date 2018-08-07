@@ -173,7 +173,7 @@ class EventItem:
             "key": self.key,
             "type": self.type,
             "instance": self.instance,
-            "data": self.data},
+            "data": self.data}
 
 
     @property

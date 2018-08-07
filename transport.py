@@ -8,6 +8,7 @@ from event import Event, EventItem
 import win32file
 import pywintypes
 import xtensions
+import event_xtensions
 
 
 def send_command(code,
