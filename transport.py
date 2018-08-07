@@ -3,8 +3,8 @@ import uuid
 import threading
 from uuid import UUID
 
-from constants import MessageCategory
-from event import Event
+from constants import MessageCategory, ParamKey, ParamType
+from event import Event, EventItem
 import win32file
 import pywintypes
 import xtensions
@@ -24,12 +24,16 @@ def send_command(code,
 
     send_command_data(event)
 
+
+# send command to relay
+# `destination_id` is ID of box controller component
 def send_relay_command(code,
                        destination_id: UUID,
-                       part_id: UUID,
+                       part_number: int,
                        workstation_id: UUID = None,
                        operator_id: UUID = None):
-    event = Event.create_relay_command(code, destination_id, part_id)
+    event = Event.create_command(code, destination_id)
+    event.items.append(EventItem.create(ParamKey.pkPart, ParamType.ptDword, part_number))
 
     if workstation_id:
         event.workstation_id = workstation_id

@@ -35,21 +35,6 @@ class Event:
         return result
 
     @staticmethod
-    def create_relay_command(code, destination_id: UUID, part_id: UUID):
-        if isinstance(code, Enum):
-            code = code.value
-
-        item = EventItem.create(ParamKey.pkPart, ParamType.ptGuid, part_id)
-
-        result = Event()
-        result.component_id = destination_id
-        result.code = (MessageType.mtCommand.value << 24) | (code & 0x00ffffff)
-        result.items.append(item)
-
-        print(Event.json(result))
-        return result
-
-    @staticmethod
     def create_event(code, source_id: UUID):
         if isinstance(code, Enum):
             code = code.value

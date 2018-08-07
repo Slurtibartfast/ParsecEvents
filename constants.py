@@ -259,7 +259,7 @@ class MessageCategory(IntFlag):
 class DevicePartType(Enum):
     DeviceComponent = 0
     SensorPart = 1
-    DrivePart = 2           # доп.реле
+    DrivePart = 2  # доп.реле
     CommPart = 3
     AreaComponent = 4
     DoorComponent = 5
@@ -296,6 +296,7 @@ class DoorCommand(Enum):
     Open4Enter = 0x0171
     APBClear = 0x016E
 
-class RelayCommand(enum.Enum):
+
+class RelayCommand(Enum):
     On = 0x0368
     Off = 0x0369
