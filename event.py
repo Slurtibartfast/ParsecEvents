@@ -5,6 +5,7 @@ from enum import Enum
 from uuid import UUID
 
 from constants import ParamType, Method, SourceType, DataBit, MessageType, ParamKey
+import xtensions
 
 
 class Event:
