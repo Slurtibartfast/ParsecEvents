@@ -189,8 +189,7 @@ class EventItem:
             "type": self.type,
             "instance": self.instance,
             "data": self.data},
-    #         default=str,
-    #         indent=4)
+
 
     @property
     def data(self):

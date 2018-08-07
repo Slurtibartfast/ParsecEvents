@@ -3,7 +3,7 @@ from uuid import UUID
 
 from constants import *
 import transport
-from event import Event, EventItem
+from event import Event
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 import xtensions
