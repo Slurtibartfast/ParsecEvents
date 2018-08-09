@@ -1,6 +1,8 @@
 import json
 import uuid
 import sqlite3
+from constants import *
+import transport
 
 sqlite3.register_converter('uniqueidentifier', lambda b: uuid.UUID(bytes_le=b))
 sqlite3.register_adapter(uuid.UUID, lambda u: u.bytes_le)
@@ -98,37 +100,37 @@ class Door_command_menue(MainMenue):
             self.door_id = cursor_halconfig.fetchone()[0]
 
     def door_open(self):
-        pass
+        transport.send_command(DoorCommand.Open, self.door_id)
 
     def door_close(self):
-        pass
+        transport.send_command(DoorCommand.Close, self.door_id)
 
     def door_relative_block_on(self):
-        pass
+        transport.send_command(DoorCommand.RelativeBlockSet, self.door_id)
 
     def door_relativ_block_off(self):
-        pass
+        transport.send_command(DoorCommand.RelativeBlockClear, self.door_id)
 
     def door_absolute_block_on(self):
-        pass
+        transport.send_command(DoorCommand.AbsoluteBlockSet, self.door_id)
 
     def door_absolute_block_off(self):
-        pass
+        transport.send_command(DoorCommand.AbsoluteBlockClear, self.door_id)
 
     def door_guard_on(self):
-        pass
+        transport.send_command(DoorCommand.GuardSet, self.door_id)
 
     def door_guard_off(self):
-        pass
+        transport.send_command(DoorCommand.GuardClear, self.door_id)
 
     def door_open_enter(self):
-        pass
+        transport.send_command(DoorCommand.Open4Enter, self.door_id)
 
     def door_open_exit(self):
-        pass
+        transport.send_command(DoorCommand.Open4Exit, self.door_id)
 
     def door_apb_clear(self):
-        pass
+        transport.send_command(DoorCommand.APBClear, self.door_id)
 
 
 
@@ -155,10 +157,10 @@ class Relay_command_menue(MainMenue):
             print(self.dev_id)
 
     def relay_switch_on(self):
-        pass
+        transport.send_relay_command(RelayCommand.On, self.drive_id, self.part_no)
 
     def relay_switch_off(self):
-        pass
+        transport.send_relay_command(RelayCommand.Off, self.drive_id, self.part_no)
 
 class Status_menue():
     def __init__(self, id_device):
