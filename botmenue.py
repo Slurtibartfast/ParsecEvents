@@ -101,6 +101,7 @@ class Door_command_menue(MainMenue):
 
     def door_open(self):
         transport.send_command(DoorCommand.Open, self.door_id)
+        print(self.door_id)
 
     def door_close(self):
         transport.send_command(DoorCommand.Close, self.door_id)

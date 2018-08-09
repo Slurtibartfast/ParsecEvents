@@ -87,11 +87,13 @@ for event in longpoll.listen():
                 if indexr == 1:
                     menue_door_command_flag = True
                     menue_door_command = Door_command_menue(menue_controller.iteme[0])
+                    menue_door_command.get_door_id(menue_door_command.dev_id)
                     send_message(event.user_id, menue_door_command.create_menue())
 
                 elif indexr == 2:
                     menue_relay_command_flag = True
                     menue_relay_command = Relay_command_menue(menue_controller.iteme[0])
+                    menue_relay_command.get_drive_id(menue_relay_command.dev_id)
                     send_message(event.user_id, menue_relay_command.create_menue())
 
                 elif indexr == 3:
@@ -109,47 +111,58 @@ for event in longpoll.listen():
             if 0 < indexr <= len(menue_door_command.items):
                 if indexr == 1:
                     menue_door_command.door_open()
-                    send_message(event.user_id, 'Выполняю команду: Открыть дверь')
+                    send_message(event.user_id, 'Выполняю команду:\nОткрыть дверь')
+                    send_message(event.user_id, menue_door_command.create_menue())
 
                 elif indexr == 2:
                     menue_door_command.door_close()
-                    send_message(event.user_id, 'Выполняю команду: Закрыть дверь')
+                    send_message(event.user_id, 'Выполняю команду:\nЗакрыть дверь')
+                    send_message(event.user_id, menue_door_command.create_menue())
 
                 elif indexr == 3:
                     menue_door_command.door_relative_block_on()
-                    send_message(event.user_id, 'Выполняю команду: Включить относительную блокировку')
+                    send_message(event.user_id, 'Выполняю команду:\nВключить относительную блокировку')
+                    send_message(event.user_id, menue_door_command.create_menue())
 
                 elif indexr == 4:
                     menue_door_command.door_relativ_block_off()
-                    send_message(event.user_id, 'Выполняю команду: Выключить относительную блокировку')
+                    send_message(event.user_id, 'Выполняю команду:\nВыключить относительную блокировку')
+                    send_message(event.user_id, menue_door_command.create_menue())
 
                 elif indexr == 5:
                     menue_door_command.door_absolute_block_on()
-                    send_message(event.user_id, 'Выполняю команду: Включить абсолютную блокировку')
+                    send_message(event.user_id, 'Выполняю команду:\nВключить абсолютную блокировку')
+                    send_message(event.user_id, menue_door_command.create_menue())
 
                 elif indexr == 6:
                     menue_door_command.door_absolute_block_off()
-                    send_message(event.user_id, 'Выполняю команду: Выключить абсолютную блокировку')
+                    send_message(event.user_id, 'Выполняю команду:\nВыключить абсолютную блокировку')
+                    send_message(event.user_id, menue_door_command.create_menue())
 
                 elif indexr == 7:
                     menue_door_command.door_guard_on()
-                    send_message(event.user_id, 'Выполняю команду: Взять под охрану')
+                    send_message(event.user_id, 'Выполняю команду:\nВзять под охрану')
+                    send_message(event.user_id, menue_door_command.create_menue())
 
                 elif indexr == 8:
                     menue_door_command.door_guard_off()
-                    send_message(event.user_id, 'Выполняю команду: Снять с охраны')
+                    send_message(event.user_id, 'Выполняю команду:\nСнять с охраны')
+                    send_message(event.user_id, menue_door_command.create_menue())
 
                 elif indexr == 9:
                     menue_door_command.door_open_enter()
-                    send_message(event.user_id, 'Выполняю команду: Открыть на вход')
+                    send_message(event.user_id, 'Выполняю команду:\nОткрыть на вход')
+                    send_message(event.user_id, menue_door_command.create_menue())
 
                 elif indexr == 10:
                     menue_door_command.door_open_exit()
-                    send_message(event.user_id, 'Выполняю команду: Открыть на выход')
+                    send_message(event.user_id, 'Выполняю команду:\nОткрыть на выход')
+                    send_message(event.user_id, menue_door_command.create_menue())
 
                 elif indexr == 11:
                     menue_door_command.door_apb_clear()
-                    send_message(event.user_id, 'Выполняю команду: Снять АПБ')
+                    send_message(event.user_id, 'Выполняю команду:\nСнять АПБ')
+                    send_message(event.user_id, menue_door_command.create_menue())
 
             else:
                 send_message(event.user_id, err_mes)
@@ -161,11 +174,13 @@ for event in longpoll.listen():
             if 0 < indexr <= len(menue_relay_command.items):
                 if indexr == 1:
                     menue_relay_command.relay_switch_on()
-                    send_message(event.user_id, 'Выполняю команду: Включить доп.реле')
+                    send_message(event.user_id, 'Выполняю команду:\nВключить доп.реле')
+                    send_message(event.user_id, menue_relay_command.create_menue())
 
                 elif indexr == 2:
                     menue_relay_command.relay_switch_off()
-                    send_message(event.user_id, 'Выполняю команду: Выключить доп.реле')
+                    send_message(event.user_id, 'Выполняю команду:\nВыключить доп.реле')
+                    send_message(event.user_id, menue_relay_command.create_menue())
             else:
                 send_message(event.user_id, err_mes)
 
@@ -176,6 +191,7 @@ for event in longpoll.listen():
             send_message(event.user_id, 'Начнем сначала (/меню)')
 
 #------------------------------- Ожидание команды для открытия захардкоденной двери -----------------------------------
+        # УБИТЬ ПОСЛЕ ОТЛАДКИ
 
         if event.user_id == my_vk_id and event.text == '/сим':
             door_id = uuid.UUID(nc_8k_144_door)
@@ -183,6 +199,7 @@ for event in longpoll.listen():
             send_message(event.user_id, 'Выполняю команду: Открыть дверь(nc-8k-144)')
 
 #-------------------------------- Ожидание команды для включения доп.реле (хардкод)------------------------------------
+        # УБИТЬ ПОСЛЕ ОТЛАДКИ
 
         elif event.user_id == my_vk_id and event.text == '/р':
             drive_id = uuid.UUID(nc_8k_144_drive)
@@ -190,6 +207,7 @@ for event in longpoll.listen():
             send_message(event.user_id, 'Выполняю команду: Включить реле(nc-8k-144)')
 
 #-------------------------------- Ожидание команды для выключения доп.реле (хардкод)-----------------------------------
+        # УБИТЬ ПОСЛЕ ОТЛАДКИ
 
         elif event.user_id == my_vk_id and event.text == '/рвык':
             drive_id = uuid.UUID(nc_8k_144_drive)
