@@ -3,17 +3,11 @@ from uuid import UUID
 from botmenue import *
 from constants import *
 import transport
-# from event import Event
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
-import xtensions
 
 token = 'de69daa37e9b587a3f23878c9d60514b484d946af62eb910712d0fce3edfc5cb2bd4e5d8a61474b6d2e17'
 my_vk_id = 4073426
-nc_8k_144_dev_id = '5D20F328-473E-4024-BBFA-DC1216FB513B'
-nc_8k_144_door = 'D874D77B-409A-4505-9866-414E7D722A8E'         # NC-8000 192.168.0.144 door comp_no = 83886081
-nc_8k_144_drive = '71914484-1072-47BB-B825-5D820B062F4A'        # NC-8000 192.168.0.144 box  comp_no = 0
-part_no = 33554433                                              # relay_part_no
 err_mes = 'Передать нужно цифру, соответствующую пункту меню'
 vk_session = vk_api.VkApi(token=token)
 vk = vk_session.get_api()
@@ -190,29 +184,6 @@ for event in longpoll.listen():
             flags()
             send_message(event.user_id, 'Начнем сначала (/меню)')
 
-#------------------------------- Ожидание команды для открытия захардкоденной двери -----------------------------------
-        # УБИТЬ ПОСЛЕ ОТЛАДКИ
-
-        if event.user_id == my_vk_id and event.text == '/сим':
-            door_id = uuid.UUID(nc_8k_144_door)
-            transport.send_command(DoorCommand.Open, door_id)
-            send_message(event.user_id, 'Выполняю команду: Открыть дверь(nc-8k-144)')
-
-#-------------------------------- Ожидание команды для включения доп.реле (хардкод)------------------------------------
-        # УБИТЬ ПОСЛЕ ОТЛАДКИ
-
-        elif event.user_id == my_vk_id and event.text == '/р':
-            drive_id = uuid.UUID(nc_8k_144_drive)
-            transport.send_relay_command(RelayCommand.On, drive_id, part_no)
-            send_message(event.user_id, 'Выполняю команду: Включить реле(nc-8k-144)')
-
-#-------------------------------- Ожидание команды для выключения доп.реле (хардкод)-----------------------------------
-        # УБИТЬ ПОСЛЕ ОТЛАДКИ
-
-        elif event.user_id == my_vk_id and event.text == '/рвык':
-            drive_id = uuid.UUID(nc_8k_144_drive)
-            transport.send_relay_command(RelayCommand.Off, drive_id, part_no)
-            send_message(event.user_id, 'Выполняю команду: Включить реле(nc-8k-144)')
 
 # -------------------------------- Ожидание команды для останоки скрипта ----------------------------------------------
 

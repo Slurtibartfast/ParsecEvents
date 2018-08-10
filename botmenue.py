@@ -72,7 +72,7 @@ class Controller_menue(MainMenue):
         MainMenue.__init__(self)
         self.index = indexr - 1
         self.iteme = itemes[self.index]
-        self.description = 'Выберете действие:\n'
+        self.description = 'Выбери действие:\n'
         self.items = ['1⃣ Управление дверью\n', '2⃣ Управление доп.реле\n', '3⃣ Просмотр статусов\n']
         self.menue_name = 'Контроллер {}\n'.format(str(self.iteme[1:])) + '-' * 52 + '\n'
 
@@ -171,8 +171,3 @@ class Status_menue():
     def create_menue(self):
         return self.menue_name + str(self.dev_id)
 
-# test = Door_command_menue('5D20F328-473E-4024-BBFA-DC1216FB513B')
-# test.get_door_id(test.dev_id)
-#
-# testRelay = Relay_command_menue('5D20F328-473E-4024-BBFA-DC1216FB513B')
-# testRelay.get_drive_id(testRelay.dev_id)
