@@ -20,17 +20,19 @@ menue_controller_flag = False
 menue_door_command_flag = False
 menue_relay_command_flag = False
 menue_status_flag = False
+menue_card_info_flag = False
 #----------------------------------------------------------------------------------------------------------------------
 
 def flags():
     global menue_main_flag, menue_controllers_flag, menue_controller_flag, menue_door_command_flag, \
-        menue_relay_command_flag, menue_status_flag
+        menue_relay_command_flag, menue_status_flag, menue_card_info_flag
     menue_main_flag = False
     menue_controllers_flag = False
     menue_controller_flag = False
     menue_door_command_flag = False
     menue_relay_command_flag = False
     menue_status_flag = False
+    menue_card_info_flag = False
 
 
 def send_message(userid, mesage):

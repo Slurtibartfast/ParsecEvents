@@ -14,7 +14,7 @@ class MainMenue:
         self.description = ' ' * 22 + 'Аллоха!\nТы попал в меню vk-бота Paresc\n(Created by yvinogradov@mdo.ru)\n' \
                                  'Давай же начнем работу. Итак, перед тобой меню, \
                         выбирай пункт который тебе интересен и отправляй мне его номер:\n'
-        self.items = ['1⃣ Контроллеры\n']
+        self.items = ['1⃣ Контроллеры\n', '2⃣ Информация по карте\n', '3⃣ О программе\n']
         self.kvadratik = '⃣'
 
     def json(self):
@@ -171,3 +171,57 @@ class Status_menue():
     def create_menue(self):
         return self.menue_name + str(self.dev_id)
 
+class Card_info_menue:
+    def __init__(self):
+        self.menue_name = 'Информация по карте:\n' + '-' * 52 +'\n'
+        self.description = 'Давай код карты в hex-формате\n'
+        self.pers_info = ''
+        self.device_info = ''
+
+
+    def create_menue(self):
+        return self.menue_name + self.description + self.pers_info + self.device_info
+
+    def get_person_info(self, cardcode):
+        with sqlite3.connect("C:/ProgramData/MDO/ParsecNET 3/parsec3.hallookup.dat",
+                             detect_types=sqlite3.PARSE_DECLTYPES) as conn_lookup, \
+                sqlite3.connect("C:/ProgramData/MDO/ParsecNET 3/parsec3.dictionary.dat") as conn_dict:
+            cursor_lookup = conn_lookup.cursor()
+            cursor_dict = conn_dict.cursor()
+            cursor_lookup.execute("""SELECT pers_id
+                                     FROM person
+                                     WHERE cardcode = :card""", {'card': cardcode})
+            result_lookup = cursor_lookup.fetchone()
+
+            if result_lookup:
+                pers_id = result_lookup[0]
+                cursor_dict.execute("""SELECT val
+                                       FROM dictionary
+                                       WHERE obj_id = :persid""", {'persid': pers_id})
+                result_dict = cursor_dict.fetchone()
+                self.pers_info = 'Карта выдана: {}\n'.format(result_dict[0])
+                Card_info_menue.create_menue()
+            else:
+                self.pers_info = 'Совпадений не найдено\n'
+                Card_info_menue.create_menue()
+
+    def get_device_info(self, cardcode):
+        with sqlite3.connect("C:/ProgramData/MDO/ParsecNET 3/parsec3.halconfig.dat") as conn:
+            cursor = conn.cursor()
+            cursor.execute("""SELECT channel_name, dev_addr, dev_model 
+                              FROM cfg_device 
+                              WHERE dev_id IN (SELECT dev_id 
+                                                FROM cfg_user 
+                                                WHERE cardcode = :card)""", {"card": cardcode})
+            results = cursor.fetchall()
+
+            if results:
+                for channel, addres, device in results:
+                    self.device_info = 'Канал: %s\n    Адрес: %s\n    Контроллер: %s\n' % (channel, addres, device)
+                    Card_info_menue.create_menue()
+            else:
+                self.device_info = 'В базе данных указанной карты нет\n'
+                Card_info_menue.create_menue()
+
+
+about = 'Долгая история о том, как тестировщики учатся программировать'
