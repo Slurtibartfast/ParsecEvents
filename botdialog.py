@@ -1,8 +1,4 @@
-import uuid
-from uuid import UUID
 from botmenue import *
-from constants import *
-import transport
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 
