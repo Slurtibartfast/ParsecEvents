@@ -25,23 +25,24 @@ class Event:
 
     @staticmethod
     def create_command(code, destination_id: UUID):
-        if isinstance(code, Enum):
-            code = code.value
-
-        result = Event()
-        result.component_id = destination_id
-        result.code = (MessageType.mtCommand.value << 24) | (code & 0x00ffffff)
-
-        return result
+        return Event.__create(MessageType.mtCommand, code, destination_id)
 
     @staticmethod
     def create_event(code, source_id: UUID):
+        return Event.__create(MessageType.mtEvent, code, source_id)
+
+    @staticmethod
+    def create_invoke(code, destination_id: UUID):
+        return Event.__create(MessageType.mtInvoke, code, destination_id)
+
+    @staticmethod
+    def __create(type: MessageType, code, component_id: UUID):
         if isinstance(code, Enum):
             code = code.value
 
         result = Event()
-        result.component_id = source_id
-        result.code = (MessageType.mtEvent.value << 24) | (code & 0x00ffffff)
+        result.component_id = component_id
+        result.code = (type.value << 24) | (code & 0x00ffffff)
 
         return result
 
@@ -122,6 +123,19 @@ class Event:
                 break
         return result
 
+    def get_state_by_id(self, id: UUID):
+        result = None
+        for item in self.items:
+            if (item.key == ParamKey.pkComponent and item.type == ParamType.ptGuid) or \
+                    (item.key == ParamKey.pkPart and item.type == ParamType.ptGuid):
+                if item.data == id:
+                    found = self.find_item(ParamKey.pkState, ParamType.ptDword, item.instance)
+                    result = found.data if found else None
+                    break
+                else:
+                    continue
+        return result
+
 
 class EventItem:
     binarySize = 20
@@ -174,7 +188,6 @@ class EventItem:
             "type": self.type,
             "instance": self.instance,
             "data": self.data}
-
 
     @property
     def data(self):

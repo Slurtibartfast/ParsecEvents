@@ -5,29 +5,6 @@
 # test1[0:72] = test
 # print(test1.hex())
 # import time
-#
-# time1 = int(time.time())
-# time.sleep(10)
-# time2 = int(time.time())
-# print(time2 - time1)
-
-# kvadratik = '⃣ '
-# nu = 10
-# ls = []
-# for x in range(1, nu):
-#     ls.append(str(x) + kvadratik)
-# print(ls)
-
-# print(int('Привет'))
-tt = '12'
-tr = '1a'
-def q(a):
-    if a.isdigit():
-        print(a + ' is num')
-    else:
-        print(a + ' is not num')
-
-q(tr)
 
 # test = Event()
 # user_id = uuid.uuid4()
@@ -73,3 +50,15 @@ q(tr)
 #    user_input = input()
 
 #listener.stop()
+from uuid import UUID
+
+import transport
+# from local_db import Dictionary
+#
+# db = Dictionary()
+#
+# listener = transport.listen_events_from(received, db.get_root_ids())
+# print(listener)
+
+data = transport.request_component_state(UUID('71914484-1072-47BB-B825-5D820B062F4A'))
+

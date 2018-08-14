@@ -35,7 +35,7 @@ class MainMenue:
 
 class Controllers_menue(MainMenue):
     def __init__(self):
-        MainMenue.__init__(self)
+        super().__init__()
         self.menue_name = '**********Контроллеры**********\n' + '-' * 52 +'\n'
         self.description = 'Выбирай контроллер, с которым будем работать дальше. Жду его номер:\n'
         self.items = []
@@ -69,7 +69,7 @@ class Controllers_menue(MainMenue):
 
 class Controller_menue(MainMenue):
     def __init__(self, indexr, itemes):
-        MainMenue.__init__(self)
+        super().__init__()
         self.index = indexr - 1
         self.iteme = itemes[self.index]
         self.description = 'Выбери действие:\n'
@@ -84,7 +84,7 @@ class Controller_menue(MainMenue):
 
 class Door_command_menue(MainMenue):
     def __init__(self, id_device):
-        MainMenue.__init__(self)
+        super().__init__()
         self.menue_name = 'Управление дверью:\n' + '-' * 52 +'\n'
         self.description = 'Пришли мне номер команды, которую необходимо выполнить\n'
         self.commands = []
@@ -152,7 +152,7 @@ class Door_command_menue(MainMenue):
 
 class Relay_command_menue(MainMenue):
     def __init__(self, id_device):
-        MainMenue.__init__(self)
+        super().__init__()
         self.menue_name = 'Управление реле:\n' + '-' * 52 +'\n'
         self.description = 'Пришли мне номер команды, которую необходимо выполнить\n'
         self.dev_id = id_device
@@ -186,6 +186,9 @@ class Status_menue:
 
     def create_menue(self):
         return self.menue_name + str(self.dev_id) + self.items
+
+    def get_state(self, id):
+        transport.send_command(Method.miGetComponentState, self.door_id)
 
 class Card_info_menue:
     def __init__(self):
@@ -247,7 +250,8 @@ class About_menue:
     def __init__(self):
         self.text = 'Долгая история о том, как тестировщики учатся программировать...\n'
         self.items = '#⃣ Вернуться в главное меню\n'
-        self.image = None
+        self.image_url = 'https://javarush.ru/api/1.0/rest/images/1293665/b5a5aa29-9978-4f20-85fa-9b8799c04318'
 
     def create_menue(self):
         return self.text + self.items
+

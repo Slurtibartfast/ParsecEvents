@@ -236,16 +236,17 @@ for event in longpoll.listen():
             menue_main_flag = False
             menue_about_flag = True
             menue_about = About_menue()
-            image_url = 'https://javarush.ru/api/1.0/rest/images/1293665/b5a5aa29-9978-4f20-85fa-9b8799c04318'
-            if image_url:
+            if menue_about.image_url:
                 attachments = []
-                image = session.get(image_url, stream=True)
+                image = session.get(menue_about.image_url, stream=True)
                 photo = upload.photo_messages(photos=image.raw)[0]
                 attachments.append('photo{}_{}'.format(photo['owner_id'], photo['id']))
-            vk.messages.send(
-                user_id=event.user_id,
-                attachment=','.join(attachments),
-                message=menue_about.create_menue())
+                vk.messages.send(
+                    user_id=event.user_id,
+                    attachment=','.join(attachments),
+                    message=menue_about.create_menue())
+            else:
+                send_message(event.user_id, menue_about.create_menue())
 
 #------------------------------ Возврат в главное меню ----------------------------------------------------------------
 
@@ -253,12 +254,6 @@ for event in longpoll.listen():
             flags()
             menue_main_flag = True
             send_message(event.user_id, menue.create_menue())
-
-#------------------------------ Аварийный выход. Сброс всех флагов меню -----------------------------------------------
-
-        elif event.user_id == my_vk_id and event.text == '/выход':
-            flags()
-            send_message(event.user_id, 'Начнем сначала (/меню)')
 
 
 # -------------------------------- Ожидание команды для останоки скрипта ----------------------------------------------

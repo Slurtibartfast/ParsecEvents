@@ -3,7 +3,7 @@ import uuid
 import threading
 from uuid import UUID
 
-from constants import MessageCategory, ParamKey, ParamType
+from constants import MessageCategory, ParamKey, ParamType, Method
 from event import Event, EventItem
 import win32file
 import pywintypes
@@ -74,6 +74,24 @@ def listen_events_from(callback,
 def listen_commands_to(callback, destinations: list):
     result = CommandsListener(callback, destinations)
     result.start()
+    return result
+
+
+def request_component_state(id: UUID) -> int:
+    result = 0
+
+    received = threading.Event()
+
+    def received_callback(data: Event):
+        nonlocal result
+        result = data.get_state_by_id(id)
+        received.set()
+
+    listener = listen_events_from(received_callback, [id], MessageCategory.Status)
+    send_command_data(Event.create_invoke(Method.miGetComponentState, id))
+    received.wait()
+    listener.stop()
+
     return result
 
 
