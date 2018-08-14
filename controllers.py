@@ -1,5 +1,12 @@
 from enum import Enum
 
+class SystemStateBits(Enum):
+    InactiveState = 31,
+    UndefinedState = 30,
+    DisabledState = 28,
+    AlarmState = 27,
+    DirtyState = 26,
+    DisabledByLicenseState = 25
 
 class Controller_states(Enum):
     Accumulator = (1 << 0),         # 0 - falure, 1 - ok(BoxState.BatteryState 1 == falure )
@@ -19,9 +26,9 @@ class Controller_states(Enum):
     ExitSensor = (1 << 14),         # 0 - closed, 1 - open(DoorState.Unlock)
 
     Attention = (1 << 24),          # 0 - normal, 1 - require attention
-    Disabled = (1 << StateBits.DisabledState),
-    Inactive = ((ulong)1 << StateBits.InactiveState),
-    Undefined = (1 << StateBits.UndefinedState)
+    Disabled = (1 << SystemStateBits.DisabledState),
+    Inactive = (1 << SystemStateBits.InactiveState),
+    Undefined = (1 << SystemStateBits.UndefinedState)
 
 class Door_states(Enum):
     Norm = 0,
@@ -32,21 +39,11 @@ class Door_states(Enum):
     Emergency = (1 << 4),
     GuardOnOff = (1 << 5),
     GuardState = (1 << 6),
-    # DCShort = (1 << 7),
     Rele2 = (1 << 8),
     Unlock = (1 << 9),
-    # DCBreak = (1 << 10),
-    # GuardShort = (1 << 11),
-    # GuardBreak = (1 << 12),
-    # Full = Norm | DCState | LockState | AbsoluteBlock | RelativeBlock | Emergency | GuardOnOff | GuardState | \
-    # DCShort | Rele2 | Unlock | DCBreak | GuardShort | GuardBreak,
     Full = Norm | DCState | LockState | AbsoluteBlock | RelativeBlock | Emergency | \
            GuardOnOff | GuardState | Rele2 | Unlock,
-
-
-Last = ((uint)1 << 31)
-
-
+    Last = (1 << 31)
 
 
 class Controller:
