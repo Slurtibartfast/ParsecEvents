@@ -94,7 +94,7 @@ for event in longpoll.listen():
                     if indexr == 1:
                         menue_door_command_flag = True
                         menue_door_command = Door_command_menue(menue_controller.iteme[0])
-                        menue_door_command.get_door_id(menue_door_command.dev_id)
+                        menue_door_command.get_door_id()
                         send_message(event.user_id, menue_door_command.create_menue())
 
                     elif indexr == 2:
@@ -105,7 +105,10 @@ for event in longpoll.listen():
 
                     elif indexr == 3:
                         menue_status_flag = True
-                        menue_status = Status_menue(menue_controller.iteme[0])
+                        door = Door_command_menue(menue_controller.iteme[0])
+                        door.get_door_id()
+                        menue_status = Status_menue(menue_controller.iteme[0], door.door_id, menue_controller.iteme[1:])
+                        menue_status.get_state()
                         send_message(event.user_id, menue_status.create_menue())
 
                 else:

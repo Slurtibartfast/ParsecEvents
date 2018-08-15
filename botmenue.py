@@ -3,6 +3,7 @@ import uuid
 import sqlite3
 from constants import *
 import transport
+from controllers import *
 
 sqlite3.register_converter('uniqueidentifier', lambda b: uuid.UUID(bytes_le=b))
 sqlite3.register_adapter(uuid.UUID, lambda u: u.bytes_le)
@@ -105,13 +106,13 @@ class Door_command_menue(MainMenue):
             '#⃣ Вернуться в главное меню\n'
         ]
 
-    def get_door_id(self, dev_id):
+    def get_door_id(self):
         with sqlite3.connect("C:/ProgramData/MDO/ParsecNET 3/parsec3.halconfig.dat",
                              detect_types=sqlite3.PARSE_DECLTYPES) as conn_halconfig:
             cursor_halconfig = conn_halconfig.cursor()
             cursor_halconfig.execute("""SELECT comp_id
                                         FROM component
-                                        WHERE comp_no = 83886081 and dev_id = :devid""", {'devid': dev_id})
+                                        WHERE comp_no = 83886081 and dev_id = :devid""", {'devid': self.dev_id})
             self.door_id = cursor_halconfig.fetchone()[0]
 
     def door_open(self):
@@ -179,16 +180,42 @@ class Relay_command_menue(MainMenue):
         transport.send_relay_command(RelayCommand.Off, self.drive_id, self.part_no)
 
 class Status_menue:
-    def __init__(self, id_device):
+    def __init__(self, id_device, door_id, model=None):
         self.menue_name = 'Просмотр статусов:\n' + '-' * 52 + '\n'
+        self.model = model
         self.dev_id = id_device
+        self.door_id = door_id
+        self.data = None
         self.items = '\n#⃣ Вернуться в главное меню'
 
     def create_menue(self):
-        return self.menue_name + str(self.dev_id) + self.items
+        if self.data:
+            dc = 'Норма' if self.data.DCState == ActiveNorm.Normal else 'Активирован'
+            ls = 'Открыт' if self.data.LockState == OnOff.On else 'Закрыт'
+            ab = 'Включена' if self.data.AbsoluteBlock == OnOff.On else 'Выключена'
+            rb = 'Включена' if self.data.RelativeBlock == OnOff.On else 'Выключена'
+            em = 'Включено' if self.data.Emergency == OnOff.On else 'Выключено'
+            og = 'На охране' if self.data.GuardOnOff == OnOff.On else 'Снята'
+            gs = 'Активирован' if self.data.GuardState == ActiveNorm.Active else 'Норма'
+            er = 'Включено' if self.data.Rele2 == OnOff.On else 'Выключено'
+            bc = 'Включена' if self.data.Unlock == OnOff.On else 'Выключено'
+            return self.menue_name + str(self.model) \
+                   + '\nДверной контакт: ' + dc \
+                   + '\nЗамок: ' + ls \
+                   + '\nАбсолютная блокировка: ' + ab \
+                   + '\nОтносительная блокировка: ' + rb \
+                   + '\nАварийное открывание: ' + em \
+                   + '\nОхрана: ' + og \
+                   + '\nОхранный датчик: ' + gs \
+                   + '\nДоп.реле: ' + er \
+                   + '\nБлокировка: ' + bc
+        else:
+            return self.menue_name + str(self.model) + self.items
 
-    def get_state(self, id):
-        transport.send_command(Method.miGetComponentState, self.door_id)
+
+    def get_state(self):
+        self.data = Door_states()
+        self.data.initialize(transport.request_component_state(self.door_id))
 
 class Card_info_menue:
     def __init__(self):

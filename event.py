@@ -175,8 +175,8 @@ class EventItem:
         if self.temporary:
             header |= 1 << 31
 
-        header |= (self.type.value & 0x7f) << 24
-        header |= (self.key.value & 0xffff) << 8
+        header |= (self.type.ParamType.value & 0x7f) << 24
+        header |= (self.key.ParamKey.value & 0xffff) << 8
         header |= (self.instance & 0xff)
 
         return header.to_bytes(4, "little") + self.__data

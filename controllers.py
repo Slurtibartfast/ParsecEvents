@@ -95,7 +95,6 @@ class Door_states:
         self.Unlock = OnOff((state >> 9) & 1)           #(1 << 9)
 
 
-
 class Controller:
     def __init__(self):
         self.model = None
