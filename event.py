@@ -198,9 +198,9 @@ class EventItem:
         elif self.type == ParamType.ptDouble:
             return struct.unpack("d", self.__data[:8])[0]
         elif self.type == ParamType.ptDword:
-            return int.from_bytes(self.__data, byteorder="little", signed=False)
+            return int.from_bytes(self.__data[:4], byteorder="little", signed=False)
         elif self.type == ParamType.ptI64:
-            return int.from_bytes(self.__data, byteorder="little", signed=False)
+            return int.from_bytes(self.__data[:8], byteorder="little", signed=False)
         elif self.type == ParamType.ptTime:
             if all(x == 0 for x in self.__data):
                 return None

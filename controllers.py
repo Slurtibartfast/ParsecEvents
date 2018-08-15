@@ -9,73 +9,91 @@ class SystemStateBits(Enum):
     DirtyState = 26,
     DisabledByLicenseState = 25
 
-
-class ControllerState:
-
-    def __init__(self):
-        self.Accumulator = OkFailure.Ok
-        self.Power = (1 << 1),  # 0 - off, 1 - on(BoxState.PowerState 1 == off )
-        self.Battery = (1 << 2),  # 0 - falure, 1 - ok(BoxState.Load 1 == falure )
-    Case = (1 << 3),  # 0 - open, 1 - closed(BoxState.Tamper 1 == open )
-    EnterSwitch = (1 << 4),  # 0 - off, 1 - on(Door_states.LockState)
-    ExitSwitch = (1 << 5),  # 0 - off, 1 - on(Door_states.Rele2)
-    AdditionalSwitch = (1 << 6),  # 0 - off, 1 - on(Door_states.Rele2)
-    CardReceiverSwitch = (1 << 7),  # 0 - off, 1 - on ???
-    AbsoluteBlock = (1 << 8),  # 0 - off, 1 - on(Door_states.AbsoluteBlock)
-    RelativeBlock = (1 << 9),  # 0 - off, 1 - on(Door_states.RelativeBlock)
-    EmergencyDoorOpen = (1 << 10),  # 0 - off, 1 - on(Door_states.Emergency)
-    Guard = (1 << 11),  # 0 - off, 1 - on(Door_states.GuardOnOff)
-    GuardSensor = (1 << 12),  # 0 - off, 1 - on(Door_states.GuardState)
-    EnterSensor = (1 << 13),  # 0 - closed, 1 - open(Door_states.DCState)
-    ExitSensor = (1 << 14),  # 0 - closed, 1 - open(Door_states.Unlock)
-
-    Attention = (1 << 24),  # 0 - normal, 1 - require attention
-        Disabled = False
-        Inactive = False
-        Undefined = False
-
-
-class Door_states(Enum):
-    Norm = 0,
-    DCState = (1 << 0),
-    LockState = (1 << 1),
-    AbsoluteBlock = (1 << 2),
-    RelativeBlock = (1 << 3),
-    Emergency = (1 << 4),
-    GuardOnOff = (1 << 5),
-    GuardState = (1 << 6),
-    Rele2 = (1 << 8),
-    Unlock = (1 << 9),
-    Full = Norm | DCState | LockState | AbsoluteBlock | RelativeBlock | Emergency | \
-           GuardOnOff | GuardState | Rele2 | Unlock,
-    Last = (1 << 31)
-
-
 class OkFailure(Enum):
     Ok = 0
     Failure = 1
-
 
 class OpenClosed(Enum):
     Closed = 0
     Opened = 1
 
+class AttentionNorm(Enum):
+    Normal = 0
+    Attention = 1
 
-class EnabledDisabled(Enum):
-    Disabled = 0
-    Enabled = 1
+class OnOff(Enum):
+    Off = 0
+    On = 1
 
-class OnOff
+class ActiveNorm(Enum):
+    Normal = 0
+    Active = 1
 
-class States(Enum):
-    Closed = 0,
-    Opened = 1,
-    Disabled = 0,
-    Enabled = 1,
-    SwitchedOn = 0,
-    SwitchedOff = 1,
-    GuardOn = 1,
-    GuardOff = 0,
+class ControllerState:
+    def __init__(self):
+        self.Accumulator = OkFailure.Ok
+        self.Power = OnOff.On
+        self.Battery = OkFailure
+        self.Case = OpenClosed.Closed
+        self.EnterSwitch = OnOff.Off
+        self.ExitSwitch = OnOff.Off
+        self.AdditionalSwitch = OnOff.Off
+        self.CardReceiverSwitch = OnOff.Off
+        self.AbsoluteBlock = OnOff.Off
+        self.RelativeBlock = OnOff.Off
+        self.EmergencyDoorOpen = OnOff.Off
+        self.Guard = OnOff.Off
+        self.GuardSensor = OnOff.Off
+        self.EnterSensor = OpenClosed.Closed
+        self.ExitSensor = OpenClosed.Closed
+        self.Attention = AttentionNorm.Normal
+        self.Disabled = False
+        self.Inactive = False
+        self.Undefined = False
+
+    def initialize(self, state):
+        self.Accumulator = OkFailure((state >> 0) & 1)      # (1 << 0) 0 - failure, 1 - ok
+        self.Power = OnOff((state >> 1) & 1)                # (1 << 1) 0 - off, 1 - on(BoxState.PowerState 1 == off )
+        self.Battery = OkFailure((state >> 2) & 1)          # (1 << 2) 0 - failure, 1 - ok(BoxState.Load 1 == failure )
+        self.Case = OpenClosed((state >> 3) & 1)            # (1 << 3) 0 - open, 1 - closed(BoxState.Tamper 1 == open )
+        self.EnterSwitch = OnOff((state >> 4) & 1)          # (1 << 4) 0 - off, 1 - on(Door_states.LockState)
+        self.ExitSwitch = OnOff((state >> 5) & 1)           # (1 << 5) 0 - off, 1 - on(Door_states.Rele2)
+        self.AdditionalSwitch = OnOff((state >> 6) & 1)     # (1 << 6) 0 - off, 1 - on(Door_states.Rele2)
+        self.CardReceiverSwitch = OnOff((state >> 7) & 1)   # (1 << 7) 0 - off, 1 - on ???
+        self.AbsoluteBlock = OnOff((state >> 8) & 1)        # (1 << 8) 0 - off, 1 - on(Door_states.AbsoluteBlock)
+        self.RelativeBlock = OnOff((state >> 9) & 1)        # (1 << 9) 0 - off, 1 - on(Door_states.RelativeBlock)
+        self.EmergencyDoorOpen = OnOff((state >> 10) & 1)   # (1 << 10) 0 - off, 1 - on(Door_states.Emergency)
+        self.Guard = OnOff((state >> 11) & 1)               # (1 << 11) 0 - off, 1 - on(Door_states.GuardOnOff)
+        self.GuardSensor = OnOff((state >> 12) & 1)         # (1 << 12) 0 - off, 1 - on(Door_states.GuardState)
+        self.EnterSensor = OpenClosed((state >> 13) & 1)    # (1 << 13) 0 - closed, 1 - open(Door_states.DCState)
+        self.ExitSensor = OpenClosed((state >> 14) & 1)     # (1 << 14) 0 - closed, 1 - open(Door_states.Unlock)
+        self.Attention = AttentionNorm((state >> 24) & 1)   # (1 << 24) 0 - normal, 1 - require attention
+
+
+
+class Door_states:
+    def __init__(self):
+        self.DCState = ActiveNorm.Normal
+        self.LockState = OnOff.Off
+        self.AbsoluteBlock = OnOff.Off
+        self.RelativeBlock = OnOff.Off
+        self.Emergency = OnOff.Off
+        self.GuardOnOff = OnOff.Off
+        self.GuardState = ActiveNorm.Normal
+        self.Rele2 = OnOff.Off
+        self.Unlock = OnOff.Off
+
+    def initialize(self, state):
+        self.DCState = ActiveNorm((state >> 0) & 1)     #(1 << 0)
+        self.LockState = OnOff((state >> 1) & 1)        #(1 << 1)
+        self.AbsoluteBlock = OnOff((state >> 2) & 1)    #(1 << 2)
+        self.RelativeBlock = OnOff((state >> 3) & 1)    #(1 << 3)
+        self.Emergency = OnOff((state >> 4) & 1)        #(1 << 4)
+        self.GuardOnOff = OnOff((state >> 5) & 1)       #(1 << 5)
+        self.GuardState = ActiveNorm((state >> 6) & 1)  #(1 << 6)
+        self.Rele2 = OnOff((state >> 8) & 1)            #(1 << 8)
+        self.Unlock = OnOff((state >> 9) & 1)           #(1 << 9)
+
 
 
 class Controller:

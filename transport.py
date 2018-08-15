@@ -85,6 +85,7 @@ def request_component_state(id: UUID) -> int:
     def received_callback(data: Event):
         nonlocal result
         result = data.get_state_by_id(id)
+        # print(result)
         received.set()
 
     listener = listen_events_from(received_callback, [id], MessageCategory.Status)
