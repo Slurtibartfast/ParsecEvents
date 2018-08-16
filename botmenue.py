@@ -181,7 +181,7 @@ class Relay_command_menue(MainMenue):
 
 class Status_menue:
     def __init__(self, id_device, door_id, model=None):
-        self.menue_name = 'Просмотр статусов:\n' + '-' * 52 + '\n'
+        self.menue_name = 'Просмотр статусов контроллера:\n'
         self.model = model
         self.dev_id = id_device
         self.door_id = door_id
@@ -200,6 +200,7 @@ class Status_menue:
             er = 'Включено' if self.data.Rele2 == OnOff.On else 'Выключено'
             bc = 'Включена' if self.data.Unlock == OnOff.On else 'Выключено'
             return self.menue_name + str(self.model) \
+                   + '\n' + '-' * 52 \
                    + '\nДверной контакт: ' + dc \
                    + '\nЗамок: ' + ls \
                    + '\nАбсолютная блокировка: ' + ab \
