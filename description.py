@@ -53,5 +53,5 @@ print(EnumEx.Test1.description("rU"))
 """
 
 print(desc(EnumEx.Test1))
-#print(desc(EnumEx2.Test1))
-print(EnumEx2.Test1.description())
+print(desc(EnumEx2.Test1))
+# print(EnumEx2.Test1.description())

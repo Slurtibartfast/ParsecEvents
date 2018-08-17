@@ -136,6 +136,18 @@ class Event:
                     continue
         return result
 
+    def set_item_data(self, key: ParamKey, type: ParamType, instance: int, data):
+        found = self.find_item(key, type, instance)
+        if found:
+            found.data = data
+        else:
+            self.items.append(EventItem.create(key, type, data, instance))
+
+    def get_item_data(self, key: ParamKey, type: ParamType, instance: int):
+        found = self.find_item(key, type, instance)
+        return found.data if found else None
+
+
 
 class EventItem:
     binarySize = 20
