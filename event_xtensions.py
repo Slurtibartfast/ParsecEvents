@@ -106,30 +106,31 @@ def user_name_get(self) -> str:
 
 Event.user_name = property(user_name_get)
 
+
 # -----------------------------------------
 
 # add Event.operator_comments property
 
 def get_string(self, key: ParamKey) -> str:
-    # Проверить что строка в UTF-8
     short_comment = self.get_item_data(key, ParamType.ptChar, 0)
     if short_comment:
-        return short_comment
+        return short_comment.encode('utf-8')
     else:
         long_comment_length = self.get_item_data(key, ParamType.ptDword, 0)
         if long_comment_length:
-            long_comment = ''
+            long_comment = None
             instance = 0
             while long_comment_length >= 0:
                 long_comment_length -= 16
                 instance += 1
                 long_comment += self.get_item_data(ParamKey.pkOperatorComments, ParamType.ptByteBuffer, instance)
-            return long_comment
+            return long_comment.encode('utf-8')
 
 
 def set_string(self, key: ParamKey, value: str):
     str_len = len(value)
     # Почистить результат выполнения предыдущих запусков данной функции
     pass
+
 
 Event.operator_comments = property(get_string, set_string)
