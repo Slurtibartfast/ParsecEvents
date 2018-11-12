@@ -101,12 +101,14 @@ for event in longpoll.listen():
                         menue_door_command_flag = True
                         menue_door_command = Door_command_menue(menue_controller.iteme[0])
                         menue_door_command.get_door_id()
+                        menue_door_command.get_operator_id()
                         send_message(event.user_id, menue_door_command.create_menue())
 
                     elif indexr == 2:
                         menue_relay_command_flag = True
                         menue_relay_command = Relay_command_menue(menue_controller.iteme[0])
                         menue_relay_command.get_drive_id(menue_relay_command.dev_id)
+                        menue_relay_command.get_operator_id()
                         send_message(event.user_id, menue_relay_command.create_menue())
 
                     elif indexr == 3:

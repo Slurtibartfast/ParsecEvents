@@ -61,8 +61,11 @@ import transport
 # print(listener)
 from controllers import ControllerState
 
-data = transport.request_component_state(UUID('71914484-1072-47BB-B825-5D820B062F4A'))
-nc_state = ControllerState()
-print(nc_state.EnterSwitch)
-nc_state.initialize(data)
-print(nc_state.EnterSwitch)
+# data = transport.request_component_state(UUID('71914484-1072-47BB-B825-5D820B062F4A'))
+# nc_state = ControllerState()
+# print(nc_state.EnterSwitch)
+# nc_state.initialize(data)
+# print(nc_state.EnterSwitch)
+
+
+

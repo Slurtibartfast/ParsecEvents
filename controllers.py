@@ -92,7 +92,6 @@ class Door_states:
         self.GuardOnOff = OnOff.Off
         self.GuardState = ActiveNorm.Normal
         self.Rele2 = OnOff.Off
-        self.Unlock = OnOff.Off
 
     def initialize(self, state):
         self.DCState = ActiveNorm((state >> 0) & 1)  # (1 << 0)

@@ -13,10 +13,12 @@ class MainMenue:
     def __init__(self):
         self.menue_name = '*********Главное меню**********\n' + '*' * 35 + '\n'
         self.description = ' ' * 22 + 'Аллоха!\nТы попал в меню vk-бота Paresc\n(Created by yvinogradov@mdo.ru)\n' \
-                                 'Давай же начнем работу. Итак, перед тобой меню, \
-                        выбирай пункт который тебе интересен и отправляй мне его номер:\n'
+                                      'Давай же начнем работу. Итак, перед тобой меню, \
+                             выбирай пункт который тебе интересен и отправляй мне его номер:\n'
         self.items = ['1⃣ Контроллеры\n', '2⃣ Информация по карте\n', '3⃣ О программе\n']
         self.kvadratik = '⃣'
+        self.operator = ''
+
 
     def json(self):
         return json.dumps({
@@ -28,16 +30,18 @@ class MainMenue:
             ensure_ascii=False
         )
 
+
     def create_menue(self):
         result = self.menue_name + self.description
         for x in self.items:
             result += x
         return result
 
+
 class Controllers_menue(MainMenue):
     def __init__(self):
         super().__init__()
-        self.menue_name = '**********Контроллеры**********\n' + '-' * 52 +'\n'
+        self.menue_name = '**********Контроллеры**********\n' + '-' * 52 + '\n'
         self.description = 'Выбирай контроллер, с которым будем работать дальше. Жду его номер:\n'
         self.items = []
 
@@ -86,7 +90,7 @@ class Controller_menue(MainMenue):
 class Door_command_menue(MainMenue):
     def __init__(self, id_device):
         super().__init__()
-        self.menue_name = 'Управление дверью:\n' + '-' * 52 +'\n'
+        self.menue_name = 'Управление дверью:\n' + '-' * 52 + '\n'
         self.description = 'Пришли мне номер команды, которую необходимо выполнить\n'
         self.commands = []
         self.dev_id = id_device
@@ -115,46 +119,56 @@ class Door_command_menue(MainMenue):
                                         WHERE comp_no = 83886081 and dev_id = :devid""", {'devid': self.dev_id})
             self.door_id = cursor_halconfig.fetchone()[0]
 
+    def get_operator_id(self):
+        with sqlite3.connect("C:/ProgramData/MDO/ParsecNET 3/parsec3.dictionary.dat",
+                             detect_types=sqlite3.PARSE_DECLTYPES) as conn_dict:
+            cursor_dict = conn_dict.cursor()
+            cursor_dict.execute("""SELECT [DICTIONARY].[OBJ_ID]
+    	    				       FROM [DICTIONARY]
+    						       INNER JOIN [HIERARCHY] ON [HIERARCHY].[OBJ_ID] = [DICTIONARY].[OBJ_ID] 
+    						       AND [HIERARCHY].[OBJ_TYPE] = 0
+    						       WHERE [DICTIONARY].[VAL] = 'parsec'""")
+            self.operator = cursor_dict.fetchone()[0]
+
     def door_open(self):
-        transport.send_command(DoorCommand.Open, self.door_id)
+        transport.send_command(DoorCommand.Open, self.door_id, operator_id=self.operator)
         print(self.door_id)
 
     def door_close(self):
-        transport.send_command(DoorCommand.Close, self.door_id)
+        transport.send_command(DoorCommand.Close, self.door_id, operator_id=self.operator)
 
     def door_relative_block_on(self):
-        transport.send_command(DoorCommand.RelativeBlockSet, self.door_id)
+        transport.send_command(DoorCommand.RelativeBlockSet, self.door_id, operator_id=self.operator)
 
     def door_relativ_block_off(self):
-        transport.send_command(DoorCommand.RelativeBlockClear, self.door_id)
+        transport.send_command(DoorCommand.RelativeBlockClear, self.door_id, operator_id=self.operator)
 
     def door_absolute_block_on(self):
-        transport.send_command(DoorCommand.AbsoluteBlockSet, self.door_id)
+        transport.send_command(DoorCommand.AbsoluteBlockSet, self.door_id, operator_id=self.operator)
 
     def door_absolute_block_off(self):
-        transport.send_command(DoorCommand.AbsoluteBlockClear, self.door_id)
+        transport.send_command(DoorCommand.AbsoluteBlockClear, self.door_id, operator_id=self.operator)
 
     def door_guard_on(self):
-        transport.send_command(DoorCommand.GuardSet, self.door_id)
+        transport.send_command(DoorCommand.GuardSet, self.door_id, operator_id=self.operator)
 
     def door_guard_off(self):
-        transport.send_command(DoorCommand.GuardClear, self.door_id)
+        transport.send_command(DoorCommand.GuardClear, self.door_id, operator_id=self.operator)
 
     def door_open_enter(self):
-        transport.send_command(DoorCommand.Open4Enter, self.door_id)
+        transport.send_command(DoorCommand.Open4Enter, self.door_id, operator_id=self.operator)
 
     def door_open_exit(self):
-        transport.send_command(DoorCommand.Open4Exit, self.door_id)
+        transport.send_command(DoorCommand.Open4Exit, self.door_id, operator_id=self.operator)
 
     def door_apb_clear(self):
-        transport.send_command(DoorCommand.APBClear, self.door_id)
-
+        transport.send_command(DoorCommand.APBClear, self.door_id, operator_id=self.operator)
 
 
 class Relay_command_menue(MainMenue):
     def __init__(self, id_device):
         super().__init__()
-        self.menue_name = 'Управление реле:\n' + '-' * 52 +'\n'
+        self.menue_name = 'Управление реле:\n' + '-' * 52 + '\n'
         self.description = 'Пришли мне номер команды, которую необходимо выполнить\n'
         self.dev_id = id_device
         self.drive_id = None
@@ -173,11 +187,25 @@ class Relay_command_menue(MainMenue):
             print(self.drive_id)
             print(self.dev_id)
 
+    def get_operator_id(self):
+        with sqlite3.connect("C:/ProgramData/MDO/ParsecNET 3/parsec3.dictionary.dat",
+                             detect_types=sqlite3.PARSE_DECLTYPES) as conn_dict:
+            cursor_dict = conn_dict.cursor()
+            cursor_dict.execute("""
+            SELECT [DICTIONARY].[OBJ_ID]
+            FROM [DICTIONARY]
+            INNER JOIN [HIERARCHY] ON [HIERARCHY].[OBJ_ID] = [DICTIONARY].[OBJ_ID]
+            AND [HIERARCHY].[OBJ_TYPE] = 0
+            WHERE [DICTIONARY].[VAL] = 'parsec'
+            """)
+            self.operator = cursor_dict.fetchone()[0]
+
     def relay_switch_on(self):
-        transport.send_relay_command(RelayCommand.On, self.drive_id, self.part_no)
+        transport.send_relay_command(RelayCommand.On, self.drive_id, self.part_no, operator_id=self.operator)
 
     def relay_switch_off(self):
-        transport.send_relay_command(RelayCommand.Off, self.drive_id, self.part_no)
+        transport.send_relay_command(RelayCommand.Off, self.drive_id, self.part_no, operator_id=self.operator)
+
 
 class Status_menue:
     def __init__(self, id_device, door_id, model=None):
@@ -190,15 +218,14 @@ class Status_menue:
 
     def create_menue(self):
         if self.data:
-            dc = 'Норма' if self.data.DCState == ActiveNorm.Normal else 'Активирован'
-            ls = 'Открыт' if self.data.LockState == OnOff.On else 'Закрыт'
-            ab = 'Включена' if self.data.AbsoluteBlock == OnOff.On else 'Выключена'
-            rb = 'Включена' if self.data.RelativeBlock == OnOff.On else 'Выключена'
-            em = 'Включено' if self.data.Emergency == OnOff.On else 'Выключено'
-            og = 'На охране' if self.data.GuardOnOff == OnOff.On else 'Снята'
-            gs = 'Активирован' if self.data.GuardState == ActiveNorm.Active else 'Норма'
-            er = 'Включено' if self.data.Rele2 == OnOff.On else 'Выключено'
-            bc = 'Включена' if self.data.Unlock == OnOff.On else 'Выключено'
+            dc = '✅ Норма' if self.data.DCState == ActiveNorm.Normal else '🅰 Активирован'
+            ls = '🔓Открыт' if self.data.LockState == OnOff.On else '🔒 Закрыт'
+            ab = '✅ Включена' if self.data.AbsoluteBlock == OnOff.On else '❎ Выключена'
+            rb = '✅ Включена' if self.data.RelativeBlock == OnOff.On else '❎ Выключена'
+            em = '✅ Включено' if self.data.Emergency == OnOff.On else '❎ Выключено'
+            og = '⛔ На охране' if self.data.GuardOnOff == OnOff.On else '◻ Снята'
+            gs = '📣 Активирован' if self.data.GuardState == ActiveNorm.Active else '🆗 Норма'
+            er = '✅ Включено' if self.data.Rele2 == OnOff.On else '❎ Выключено'
             return self.menue_name + str(self.model) \
                    + '\n' + '-' * 52 \
                    + '\nДверной контакт: ' + dc \
@@ -208,25 +235,25 @@ class Status_menue:
                    + '\nАварийное открывание: ' + em \
                    + '\nОхрана: ' + og \
                    + '\nОхранный датчик: ' + gs \
-                   + '\nДоп.реле: ' + er \
-                   + '\nБлокировка: ' + bc
+                   + '\nДоп.реле: ' + er
         else:
             return self.menue_name + str(self.model) + self.items
 
+    # 🚪 🔓 ⚠ ✋ 🆘 🚨 🔔 ▪
 
     def get_state(self):
         self.data = Door_states()
         self.data.initialize(transport.request_component_state(self.door_id))
 
+
 class Card_info_menue:
     def __init__(self):
-        self.menue_name = 'Информация по карте:\n' + '-' * 52 +'\n'
+        self.menue_name = 'Информация по карте:\n' + '-' * 52 + '\n'
         self.description = 'Давай код карты в hex-формате. Ожидаю 8 знаков (Если номер 3 байта, ' \
                            'в старших байтах пиши нули).\n'
         self.pers_info = ''
         self.device_info = ''
         self.items = '#⃣ Вернуться в главное меню\n'
-
 
     def create_menue(self):
         return self.menue_name + self.description + self.pers_info + self.device_info + self.items
@@ -254,7 +281,6 @@ class Card_info_menue:
             else:
                 self.pers_info = '\nСовпадений не найдено\n'
 
-
     def get_device_info(self, cardcode):
         with sqlite3.connect("C:/ProgramData/MDO/ParsecNET 3/parsec3.halconfig.dat") as conn:
             cursor = conn.cursor()
@@ -273,7 +299,6 @@ class Card_info_menue:
                 self.device_info = '\nВ базе данных указанной карты нет\n'
 
 
-
 class About_menue:
     def __init__(self):
         self.text = 'Долгая история о том, как тестировщики учатся программировать...\n'
@@ -282,4 +307,3 @@ class About_menue:
 
     def create_menue(self):
         return self.text + self.items
-
