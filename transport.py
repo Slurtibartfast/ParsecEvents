@@ -14,7 +14,8 @@ import event_xtensions
 def send_command(code,
                  destination_id: UUID,
                  workstation_id: UUID = None,
-                 operator_id: UUID = None):
+                 operator_id: UUID = None,
+                 customization = None):
     event = Event.create_command(code, destination_id)
 
     if workstation_id:
@@ -22,6 +23,9 @@ def send_command(code,
 
     if operator_id:
         event.operator_id = operator_id
+
+    if customization:
+        customization(event)
 
     send_command_data(event)
 

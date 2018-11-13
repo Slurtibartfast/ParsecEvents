@@ -4,6 +4,8 @@ import sqlite3
 from constants import *
 import transport
 from controllers import *
+import event_xtensions
+from event import Event
 
 sqlite3.register_converter('uniqueidentifier', lambda b: uuid.UUID(bytes_le=b))
 sqlite3.register_adapter(uuid.UUID, lambda u: u.bytes_le)
@@ -19,7 +21,6 @@ class MainMenue:
         self.kvadratik = '⃣'
         self.operator = ''
 
-
     def json(self):
         return json.dumps({
             'Название меню': self.menue_name,
@@ -29,7 +30,6 @@ class MainMenue:
             indent=2,
             ensure_ascii=False
         )
-
 
     def create_menue(self):
         result = self.menue_name + self.description
@@ -130,8 +130,11 @@ class Door_command_menue(MainMenue):
     						       WHERE [DICTIONARY].[VAL] = 'parsec'""")
             self.operator = cursor_dict.fetchone()[0]
 
+
     def door_open(self):
-        transport.send_command(DoorCommand.Open, self.door_id, operator_id=self.operator)
+        def customization(event: Event):
+            event.operator_comments = "send by VK-bot"
+        transport.send_command(DoorCommand.Open, self.door_id, operator_id=self.operator, customization=customization)
         print(self.door_id)
 
     def door_close(self):
@@ -144,7 +147,12 @@ class Door_command_menue(MainMenue):
         transport.send_command(DoorCommand.RelativeBlockClear, self.door_id, operator_id=self.operator)
 
     def door_absolute_block_on(self):
-        transport.send_command(DoorCommand.AbsoluteBlockSet, self.door_id, operator_id=self.operator)
+        def customization(event: Event):
+            event.operator_comments = "Команда отправлена VK-bot'ом"
+        transport.send_command(DoorCommand.AbsoluteBlockSet,
+                               self.door_id,
+                               operator_id=self.operator,
+                               customization=customization)
 
     def door_absolute_block_off(self):
         transport.send_command(DoorCommand.AbsoluteBlockClear, self.door_id, operator_id=self.operator)

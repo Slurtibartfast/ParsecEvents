@@ -148,19 +148,19 @@ class Event:
         return found.data if found else None
 
     def get_string(self, key: ParamKey) -> str or None:
-        short_comment = self.get_item_data(key, ParamType.ptChar, 0)
-        if short_comment:
-            return short_comment
+        short_value = self.get_item_data(key, ParamType.ptChar, 0)
+        if short_value:
+            return short_value
         else:
-            long_comment_length = self.get_item_data(key, ParamType.ptDword, 0)
-            if long_comment_length:
-                long_comment = ''
+            long_value_length = self.get_item_data(key, ParamType.ptDword, 0)
+            if long_value_length:
+                binary_long_value = bytearray()
                 instance = 0
-                while long_comment_length > 0:
-                    long_comment_length -= 16
-                    long_comment += self.get_item_data(key, ParamType.ptByteBuffer, instance).decode(encoding="utf-8")
+                while long_value_length > 0:
+                    long_value_length -= 16
+                    binary_long_value += self.get_item_data(key, ParamType.ptByteBuffer, instance)
                     instance += 1
-                return long_comment
+                return binary_long_value.decode(encoding="utf-8")
             else:
                 return None
 
@@ -168,13 +168,14 @@ class Event:
         if len(value) <= 16:
             self.set_item_data(key, ParamType.ptChar, 0, value)
         else:
-            self.set_item_data(key, ParamType.ptDword, 0, len(value))
+            binary_value = value.encode("utf-8")
+            self.set_item_data(key, ParamType.ptDword, 0, len(binary_value))
             instance = 0
             comment_length = 0
             end_index = 16
-            while comment_length < len(value):
+            while comment_length < len(binary_value):
                 self.set_item_data(key, ParamType.ptByteBuffer, instance,
-                                   value[comment_length:end_index].encode('utf-8'))
+                                   binary_value[comment_length:end_index])
                 instance += 1
                 comment_length = end_index
                 end_index += 16
