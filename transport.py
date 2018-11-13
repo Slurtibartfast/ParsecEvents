@@ -36,7 +36,8 @@ def send_relay_command(code,
                        destination_id: UUID,
                        part_number: int,
                        workstation_id: UUID = None,
-                       operator_id: UUID = None):
+                       operator_id: UUID = None,
+                       customization = None):
     event = Event.create_command(code, destination_id)
     event.items.append(EventItem.create(ParamKey.pkPart, ParamType.ptDword, part_number))
 
@@ -45,6 +46,9 @@ def send_relay_command(code,
 
     if operator_id:
         event.operator_id = operator_id
+
+    if customization:
+        customization(event)
 
     send_command_data(event)
 

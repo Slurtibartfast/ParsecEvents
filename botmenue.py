@@ -131,46 +131,55 @@ class Door_command_menue(MainMenue):
             self.operator = cursor_dict.fetchone()[0]
 
 
+    def __customization(event: Event):
+        event.operator_comments = "Команда отправлена VK-bot'ом"
+
     def door_open(self):
-        def customization(event: Event):
-            event.operator_comments = "send by VK-bot"
-        transport.send_command(DoorCommand.Open, self.door_id, operator_id=self.operator, customization=customization)
+        transport.send_command(DoorCommand.Open, self.door_id, operator_id=self.operator,
+                               customization=Door_command_menue.__customization)
         print(self.door_id)
 
     def door_close(self):
-        transport.send_command(DoorCommand.Close, self.door_id, operator_id=self.operator)
+        transport.send_command(DoorCommand.Close, self.door_id, operator_id=self.operator,
+                               customization=Door_command_menue.__customization)
 
     def door_relative_block_on(self):
-        transport.send_command(DoorCommand.RelativeBlockSet, self.door_id, operator_id=self.operator)
+        transport.send_command(DoorCommand.RelativeBlockSet, self.door_id, operator_id=self.operator,
+                               customization=Door_command_menue.__customization)
 
     def door_relativ_block_off(self):
-        transport.send_command(DoorCommand.RelativeBlockClear, self.door_id, operator_id=self.operator)
+        transport.send_command(DoorCommand.RelativeBlockClear, self.door_id, operator_id=self.operator,
+                               customization=Door_command_menue.__customization)
 
     def door_absolute_block_on(self):
-        def customization(event: Event):
-            event.operator_comments = "Команда отправлена VK-bot'ом"
         transport.send_command(DoorCommand.AbsoluteBlockSet,
                                self.door_id,
                                operator_id=self.operator,
-                               customization=customization)
+                               customization=Door_command_menue.__customization)
 
     def door_absolute_block_off(self):
-        transport.send_command(DoorCommand.AbsoluteBlockClear, self.door_id, operator_id=self.operator)
+        transport.send_command(DoorCommand.AbsoluteBlockClear, self.door_id, operator_id=self.operator,
+                               customization=Door_command_menue.__customization)
 
     def door_guard_on(self):
-        transport.send_command(DoorCommand.GuardSet, self.door_id, operator_id=self.operator)
+        transport.send_command(DoorCommand.GuardSet, self.door_id, operator_id=self.operator,
+                               customization=Door_command_menue.__customization)
 
     def door_guard_off(self):
-        transport.send_command(DoorCommand.GuardClear, self.door_id, operator_id=self.operator)
+        transport.send_command(DoorCommand.GuardClear, self.door_id, operator_id=self.operator,
+                               customization=Door_command_menue.__customization)
 
     def door_open_enter(self):
-        transport.send_command(DoorCommand.Open4Enter, self.door_id, operator_id=self.operator)
+        transport.send_command(DoorCommand.Open4Enter, self.door_id, operator_id=self.operator,
+                               customization=Door_command_menue.__customization)
 
     def door_open_exit(self):
-        transport.send_command(DoorCommand.Open4Exit, self.door_id, operator_id=self.operator)
+        transport.send_command(DoorCommand.Open4Exit, self.door_id, operator_id=self.operator,
+                               customization=Door_command_menue.__customization)
 
     def door_apb_clear(self):
-        transport.send_command(DoorCommand.APBClear, self.door_id, operator_id=self.operator)
+        transport.send_command(DoorCommand.APBClear, self.door_id, operator_id=self.operator,
+                               customization=Door_command_menue.__customization)
 
 
 class Relay_command_menue(MainMenue):
@@ -208,11 +217,16 @@ class Relay_command_menue(MainMenue):
             """)
             self.operator = cursor_dict.fetchone()[0]
 
+    def __customization(event: Event):
+        event.operator_comments = "Команда отправлена VK-bot'ом"
+
     def relay_switch_on(self):
-        transport.send_relay_command(RelayCommand.On, self.drive_id, self.part_no, operator_id=self.operator)
+        transport.send_relay_command(RelayCommand.On, self.drive_id, self.part_no, operator_id=self.operator,
+                               customization=Relay_command_menue.__customization)
 
     def relay_switch_off(self):
-        transport.send_relay_command(RelayCommand.Off, self.drive_id, self.part_no, operator_id=self.operator)
+        transport.send_relay_command(RelayCommand.Off, self.drive_id, self.part_no, operator_id=self.operator,
+                               customization=Relay_command_menue.__customization)
 
 
 class Status_menue:
