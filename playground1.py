@@ -59,6 +59,7 @@ import transport
 #
 # listener = transport.listen_events_from(received, db.get_root_ids())
 # print(listener)
+from constants import ParamKey
 from controllers import ControllerState
 
 # data = transport.request_component_state(UUID('71914484-1072-47BB-B825-5D820B062F4A'))
@@ -67,5 +68,9 @@ from controllers import ControllerState
 # nc_state.initialize(data)
 # print(nc_state.EnterSwitch)
 
+from event_xtensions import *
+st = Event()
+st.operator_comments = 'йцукенгшщзфывапролдж'
 
-
+print(st.json())
+print(st.operator_comments)

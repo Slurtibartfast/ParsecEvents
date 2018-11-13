@@ -147,6 +147,37 @@ class Event:
         found = self.find_item(key, type, instance)
         return found.data if found else None
 
+    def get_string(self, key: ParamKey) -> str or None:
+        short_comment = self.get_item_data(key, ParamType.ptChar, 0)
+        if short_comment:
+            return short_comment
+        else:
+            long_comment_length = self.get_item_data(key, ParamType.ptDword, 0)
+            if long_comment_length:
+                long_comment = ''
+                instance = 0
+                while long_comment_length > 0:
+                    long_comment_length -= 16
+                    long_comment += self.get_item_data(key, ParamType.ptByteBuffer, instance).decode(encoding="utf-8")
+                    instance += 1
+                return long_comment
+            else:
+                return None
+
+    def set_string(self, key: ParamKey, value: str):
+        if len(value) <= 16:
+            self.set_item_data(key, ParamType.ptChar, 0, value)
+        else:
+            self.set_item_data(key, ParamType.ptDword, 0, len(value))
+            instance = 0
+            comment_length = 0
+            end_index = 16
+            while comment_length < len(value):
+                self.set_item_data(key, ParamType.ptByteBuffer, instance,
+                                   value[comment_length:end_index].encode('utf-8'))
+                instance += 1
+                comment_length = end_index
+                end_index += 16
 
 
 class EventItem:
@@ -206,7 +237,7 @@ class EventItem:
         if self.type == ParamType.ptGuid:
             return UUID(bytes_le=bytes(self.__data))
         elif self.type == ParamType.ptChar:
-            return self.__data.decode(encoding="ascii").rstrip('\0')
+            return self.__data.decode(encoding="utf-8").rstrip('\0')
         elif self.type == ParamType.ptDouble:
             return struct.unpack("d", self.__data[:8])[0]
         elif self.type == ParamType.ptDword:
@@ -231,8 +262,9 @@ class EventItem:
             bytes_value = value.bytes_le
         elif self.type == ParamType.ptChar:
             if type(value) is not str:
+                print('тип данных: ', type(value))
                 raise Exception()
-            bytes_value = value.encode(encoding="ascii")
+            bytes_value = value.encode(encoding="utf-8")
         elif self.type == ParamType.ptDouble:
             if type(value) is not float:
                 raise Exception()
