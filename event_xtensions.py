@@ -120,7 +120,7 @@ def get_string(self, key: ParamKey) -> str:
         if long_comment_length:
             long_comment = None
             instance = 0
-            while long_comment_length >= 0:
+            while long_comment_length > 0:
                 long_comment_length -= 16
                 instance += 1
                 long_comment += self.get_item_data(ParamKey.pkOperatorComments, ParamType.ptByteBuffer, instance)
