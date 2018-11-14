@@ -169,11 +169,12 @@ class Event:
             self.set_item_data(key, ParamType.ptChar, 0, value)
         else:
             binary_value = value.encode("utf-8")
-            self.set_item_data(key, ParamType.ptDword, 0, len(binary_value))
+            value_length = len(binary_value)
+            self.set_item_data(key, ParamType.ptDword, 0, value_length)
             instance = 0
             comment_length = 0
             end_index = 16
-            while comment_length < len(binary_value):
+            while comment_length < value_length:
                 self.set_item_data(key, ParamType.ptByteBuffer, instance,
                                    binary_value[comment_length:end_index])
                 instance += 1
